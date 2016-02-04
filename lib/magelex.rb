@@ -1,5 +1,12 @@
 require "magelex/version"
 
+require 'logger'
+
 module Magelex
-  # Your code goes here...
+  def self.logger
+    @logger ||= Logger.new
+  end
+  def self.logger= logger
+    @logger = logger
+  end
 end

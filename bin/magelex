@@ -1,3 +1,35 @@
 #!/usr/bin/env ruby
 
 require "magelex"
+
+require 'optparse'
+
+program_name = File.basename __FILE__
+options = {out_dir: 'lexware'}
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: #{program_name} DIR_OR_FILE"
+  opts.separator ""
+
+  opts.on('-o', '--out-dir DIR', 'Directory to write output files to.') do |o|
+    options[:out_dir] = o
+  end
+end.parse!
+
+if ARGV.length != 1
+  STDERR.puts "Need an argument (directory or file)"
+  exit 1
+end
+
+Magelex.logger = Logger.new STDOUT
+
+Magelex.logger.level = options[:verbose] ? Logger::DEBUG : Logger::INFO
+Magelex.logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+Magelex.logger.formatter = proc { |severity, datetime, progname, msg|
+  "#{severity} - #{datetime} - #{msg}\n"
+}
+
+def main
+  Magelex.logger.info("Started")
+end
+
+main
