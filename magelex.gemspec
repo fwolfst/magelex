@@ -1,0 +1,24 @@
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'magelex/version'
+
+Gem::Specification.new do |spec|
+  spec.name          = "magelex"
+  spec.version       = Magelex::VERSION
+  spec.authors       = ["Felix Wolfsteller"]
+  spec.email         = ["felix.wolfsteller@gmail.com"]
+  spec.license       = ["GPL 3+"]
+
+  spec.summary       = %q{Bridge for data from Magento shop to Lexware financial software.}
+  spec.homepage      = "https://github.com/fwolfst/magelex"
+
+  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  spec.bindir        = "exe"
+  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.require_paths = ["lib"]
+
+  spec.add_development_dependency "bundler", "~> 1.11"
+  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rspec", "~> 3.0"
+end
