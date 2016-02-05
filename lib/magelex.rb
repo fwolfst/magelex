@@ -1,4 +1,7 @@
-require "magelex/version"
+require 'magelex/version'
+require 'magelex/magento_csv'
+require 'magelex/lexware_bill'
+require 'magelex/tax_guess'
 
 require 'logger'
 
