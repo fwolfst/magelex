@@ -9,8 +9,12 @@ module Magelex
     attr_accessor :order_nr, :customer_name, :country_code,
       :date, :status, :shipping_cost, :total, :total_0, :total_7, :total_19
 
-    def initialize
+    def initialize values={}
       @total_0, @total_7, @total_19, @total = 0, 0, 0, 0
+      @customer_name = values[:customer_name] || ""
+      @order_nr = values[:order_nr] || nil
+      @date     = values[:date] || nil
+      @total    = values[:total] || nil
     end
 
     def swiss?

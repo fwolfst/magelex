@@ -5,6 +5,17 @@ describe Magelex::LexwareBill do
     expect(Magelex::LexwareBill.new).not_to be nil
   end
 
+  it 'can be initialized with values' do
+    bill = Magelex::LexwareBill.new customer_name: "Hugo Harm",
+      order_nr: 2039132,
+      date: "12.12.2012",
+      total: 192083
+    expect(bill.customer_name).to eq "Hugo Harm"
+    expect(bill.order_nr).to eq 2039132
+    expect(bill.date).to eq "12.12.2012"
+    expect(bill.total).to eq 192083
+  end
+
   describe '#swiss?' do
     it 'returns true for swiss orders' do
       expect(Magelex::LexwareBill.new.swiss?).to be false
