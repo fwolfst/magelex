@@ -2,6 +2,10 @@ require 'magelex'
 
 module Magelex
   class LexwareBill
+    @@EU_CODES = ['BE','BG','CZ','DK','EE','EL','ES','FR',
+                  'IE','IT','CY','LV','LT','LU','HU','MT',
+                  'NL','AT','PL','PT','RO','SI','SK','FI','SE','UK']
+
     attr_accessor :order_nr, :customer_name, :country_code,
       :date, :status, :shipping_cost, :total, :total_0, :total_7, :total_19
 
@@ -24,6 +28,14 @@ module Magelex
       else
         raise 'Unknown Tax class'
       end
+    end
+
+    def customer_lastname
+      @customer_name.split[-1]
+    end
+
+    def in_eu?
+      @@EU_CODES.include? @country_code
     end
   end
 end

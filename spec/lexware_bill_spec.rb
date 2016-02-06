@@ -34,5 +34,24 @@ describe Magelex::LexwareBill do
       expect(@bill.total_19).to eq(10)
     end
   end
-end
 
+  describe '#customer_lastname' do
+    it 'splits the name' do
+      bill = Magelex::LexwareBill.new
+      bill.customer_name = "John Doe"
+      expect(bill.customer_lastname).to eq "Doe"
+      bill.customer_name = "John The Loe"
+      expect(bill.customer_lastname).to eq "Loe"
+    end
+  end
+
+  describe '#in_eu?' do
+    it 'correctly finds out whether Bill goes to EU.' do
+      bill = Magelex::LexwareBill.new
+      bill.country_code = 'BE'
+      expect(bill.in_eu?).to be true
+      bill.country_code = 'NC'
+      expect(bill.in_eu?).to be false
+    end
+  end
+end
