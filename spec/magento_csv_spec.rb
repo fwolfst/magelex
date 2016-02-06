@@ -16,7 +16,8 @@ describe Magelex::MagentoCSV do
     end
     it 'converts date field' do
       bills = Magelex::MagentoCSV.parse(File.read("spec/data/test_data.csv"))
-      expect(bills[0].date).to eq("01.01.2015 22:10:28")
+      date = Date.civil(2015, 1, 1)
+      expect(bills[0].date).to eq(date)
     end
     it 'adds up totals' do
       bills = Magelex::MagentoCSV.parse(File.read("spec/data/test_data.csv"))

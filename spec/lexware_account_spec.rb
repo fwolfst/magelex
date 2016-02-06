@@ -28,6 +28,7 @@ describe Magelex::AccountNumber do
       expect(Magelex::AccountNumber.for_customer @bill).to eq(12300)
     end
   end
+
   describe '#for_7' do
     before do
       @bill = Magelex::LexwareBill.new
@@ -41,6 +42,7 @@ describe Magelex::AccountNumber do
       expect(Magelex::AccountNumber.for_7(@bill)).to eq '8310'
     end
   end
+
   describe '#for_19' do
     before do
       @bill = Magelex::LexwareBill.new

@@ -15,7 +15,7 @@ module Magelex
 
     CSV::Converters[:order_date] = lambda do |value, info|
       if info[:header] == 'Order Date'
-        value[0..10]
+        Date.strptime(value[0..10], "%d.%m.%Y")
       else
         value
       end
@@ -48,7 +48,7 @@ module Magelex
       current_bill = Magelex::LexwareBill.new
 
       CSV::parse(string, :headers => :first_row,
-                 converters: [:all, :german_money_amount]) do |row|
+                 converters: [:all, :german_money_amount, :order_date]) do |row|
         # Multiple rows (with same order_nr) define one order
         # One order will be mapped to one bill
         if current_bill.order_nr != row['Order Number']
