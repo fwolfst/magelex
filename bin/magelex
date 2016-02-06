@@ -30,6 +30,10 @@ Magelex.logger.formatter = proc { |severity, datetime, progname, msg|
 
 def main
   Magelex.logger.info("Started")
+  bills = Magelex::MagentoCSV.read ARGV[0]
+  bills.each do |bill|
+    Magelex.logger.info("Order #{bill.order_nr} Status #{bill.status}")
+  end
 end
 
 main
