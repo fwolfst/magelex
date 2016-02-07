@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Magelex::VERSION
   spec.authors       = ["Felix Wolfsteller"]
   spec.email         = ["felix.wolfsteller@gmail.com"]
-  spec.license       = ["GPL 3+"]
+  spec.licenses      = ['GPL-3.0']
 
   spec.summary       = %q{Bridge for data from Magento shop to Lexware financial software.}
   spec.homepage      = "https://github.com/fwolfst/magelex"
