@@ -69,6 +69,7 @@ describe Magelex::AccountNumber do
     end
 
     pending 'respects swiss special cases' do
+      # This has yet to be triggered manally (bill#swissify)
       expect(false).to be true
     end
   end
