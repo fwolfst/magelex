@@ -20,7 +20,19 @@ Customer accounts are hard coded.  Database access necessary for date correction
 
 ## Usage
 
-Call `magelex --help` to get a basic idea.
+Call `magelex --help` to get a basic idea:
+
+    Usage: magelex DIR_OR_FILE
+    
+    Imports order data from magento csv export, exports this data to be imported to open positions in lexware.
+    
+        -o, --out-dir DIR                Directory to write output files to.
+        -l, --log-file FILE              File to log to (default: STDERR).
+        -v, --verbose                    Run verbosely
+        -s, --skip-db                    Do not update dates from mysql database.
+        -h, --help                       Show this help and exit.
+            --version                    Show version and exit.
+    
 
 By default, `magelex` will log to `STDERR`, put you can pass the path to a log file.
 
