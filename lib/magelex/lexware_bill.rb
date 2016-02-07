@@ -44,5 +44,9 @@ module Magelex
     def in_eu?
       @@EU_CODES.include? @country_code
     end
+
+    def check
+      @total == @total_0 + @total_7 + @total_19
+    end
   end
 end

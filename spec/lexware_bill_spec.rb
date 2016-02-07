@@ -71,4 +71,21 @@ describe Magelex::LexwareBill do
       expect(bill.in_eu?).to be false
     end
   end
+
+  describe '#check' do
+    it 'is true when total equals subtotals' do
+      bill = Magelex::LexwareBill.new total: 900,
+                                      total_0: 100,
+                                      total_7: 200,
+                                      total_19: 600
+      expect(bill.check).to eq true
+    end
+    it 'is false when total does not equals subtotals' do
+      bill = Magelex::LexwareBill.new total: 413,
+                                      total_0: 100,
+                                      total_7: 200,
+                                      total_19: 600
+      expect(bill.check).to eq false
+    end
+  end
 end
