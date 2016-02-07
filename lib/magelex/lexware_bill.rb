@@ -14,7 +14,10 @@ module Magelex
       @customer_name = values[:customer_name] || ""
       @order_nr = values[:order_nr] || nil
       @date     = values[:date] || nil
-      @total    = values[:total] || nil
+      @total    = values[:total] || 0
+      @total_0  = values[:total_0] || 0
+      @total_7  = values[:total_7] || 0
+      @total_19 = values[:total_19] || 0
     end
 
     def swiss?

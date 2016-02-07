@@ -9,11 +9,17 @@ describe Magelex::LexwareBill do
     bill = Magelex::LexwareBill.new customer_name: "Hugo Harm",
       order_nr: 2039132,
       date: "12.12.2012",
-      total: 192083
+      total: 192083,
+      total_0: 13,
+      total_7: 831,
+      total_19: 221
     expect(bill.customer_name).to eq "Hugo Harm"
     expect(bill.order_nr).to eq 2039132
     expect(bill.date).to eq "12.12.2012"
     expect(bill.total).to eq 192083
+    expect(bill.total_0).to eq 13
+    expect(bill.total_7).to eq 831
+    expect(bill.total_19).to eq 221
   end
 
   describe '#swiss?' do
