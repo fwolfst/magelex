@@ -56,4 +56,20 @@ describe Magelex::AccountNumber do
       expect(Magelex::AccountNumber.for_19(@bill)).to eq '8315'
     end
   end
+
+  describe '#for' do
+    before do
+      @bill = Magelex::LexwareBill.new(total_0: 12, total_7: 78, total_19: 12.42)
+    end
+
+    it 'picks the right bill attribute' do
+      expect(Magelex::AccountNumber.for(@bill, :total_0)).to eq "8120"
+      expect(Magelex::AccountNumber.for(@bill, :total_7)).to eq "8300"
+      expect(Magelex::AccountNumber.for(@bill, :total_19)).to eq "8400"
+    end
+
+    pending 'respects swiss special cases' do
+      expect(false).to be true
+    end
+  end
 end

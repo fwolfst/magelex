@@ -12,6 +12,19 @@ module Magelex
       10000 + ord * 100
     end
 
+    # get tax for :total_0, :total_7 or :total_19
+    def self.for(bill, tax_kind)
+      if tax_kind == :total_0
+        return for_0 bill
+      elsif tax_kind == :total_7
+        return for_7 bill
+      elsif tax_kind == :total_19
+        return for_19 bill
+      else
+        raise "unknown tax_kind"
+      end
+    end
+
     def self.for_7 bill
       bill.in_eu? ? '8310' : '8300'
     end
