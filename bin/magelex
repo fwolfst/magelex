@@ -20,7 +20,7 @@ if ARGV.length != 1
   exit 1
 end
 
-Magelex.logger = Logger.new STDOUT
+Magelex.logger = Logger.new STDERR
 
 Magelex.logger.level = options[:verbose] ? Logger::DEBUG : Logger::INFO
 Magelex.logger.datetime_format = "%Y-%m-%d %H:%M:%S"
