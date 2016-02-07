@@ -1,6 +1,10 @@
 module Magelex
   module LexwareCSV
     def self.write file, bills
+      File.open(file, 'w') do |f|
+        f.write render(bills).gsub("\n", "\r\n").encode(
+          'windows-1252', invalid: :replace, undef: :replace)
+      end
     end
 
     def self.to_rows bill
