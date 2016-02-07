@@ -20,9 +20,15 @@ Customer accounts are hard coded.  Database access necessary for date correction
 
 Call `magelex --help` to get a basic idea.
 
+By default, `magelex` will log to `STDERR`, put you can pass the path to a log file.
+
+It consumes a single file (given as argument, as in `magelex magento_orders.csv`).  `magelex` will create a file with same filename in the path `lexware` (can be changed with the `--out-dir` switch).
+
 ### Configuration
 
-Configure database access in `magelex.conf` .
+Configure magento MySQL database access in `magelex.conf` .  An example configuration comes shipped with the gem (`magelex.conf.example`).
+
+If no database queries should be done, invoke with `--skip-db`.
 
 ### Use the command line interface
 

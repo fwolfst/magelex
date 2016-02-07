@@ -10,6 +10,9 @@ options = {out_dir: 'lexware'}
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: #{program_name} DIR_OR_FILE"
   opts.separator ""
+  opts.separator "Imports order data from magento csv export, exports this"\
+    " data to be imported to open positions in lexware."
+  opts.separator ""
 
   opts.on('-o', '--out-dir DIR', 'Directory to write output files to.') do |o|
     options[:out_dir] = o
