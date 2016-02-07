@@ -11,13 +11,19 @@ module Magelex
 
     def initialize values={}
       @total_0, @total_7, @total_19, @total = 0, 0, 0, 0
-      @customer_name = values[:customer_name] || ""
-      @order_nr = values[:order_nr] || nil
-      @date     = values[:date] || nil
-      @total    = values[:total] || 0
-      @total_0  = values[:total_0] || 0
-      @total_7  = values[:total_7] || 0
-      @total_19 = values[:total_19] || 0
+      @customer_name = values.delete(:customer_name) || ""
+      @order_nr = values.delete(:order_nr) || nil
+      @date     = values.delete(:date) || nil
+      @total    = values.delete(:total) || 0
+      @total_0  = values.delete(:total_0) || 0
+      @total_7  = values.delete(:total_7) || 0
+      @total_19 = values.delete(:total_19) || 0
+      @status   = values.delete(:status) || nil
+      @shipping_cost = values.delete(:shipping_cost) || nil
+      @country_code  = values.delete(:country_code) || nil
+      if !values.empty?
+        raise "Unknown values for bill: #{values.inspect}"
+      end
     end
 
     def swiss?

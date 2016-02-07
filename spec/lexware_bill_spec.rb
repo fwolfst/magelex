@@ -1,25 +1,36 @@
 require 'spec_helper'
 
 describe Magelex::LexwareBill do
-  it 'can be initialized' do
-    expect(Magelex::LexwareBill.new).not_to be nil
-  end
+  describe '#initialize' do
+    it 'can be initialized' do
+      expect(Magelex::LexwareBill.new).not_to be nil
+    end
 
-  it 'can be initialized with values' do
-    bill = Magelex::LexwareBill.new customer_name: "Hugo Harm",
-      order_nr: 2039132,
-      date: "12.12.2012",
-      total: 192083,
-      total_0: 13,
-      total_7: 831,
-      total_19: 221
-    expect(bill.customer_name).to eq "Hugo Harm"
-    expect(bill.order_nr).to eq 2039132
-    expect(bill.date).to eq "12.12.2012"
-    expect(bill.total).to eq 192083
-    expect(bill.total_0).to eq 13
-    expect(bill.total_7).to eq 831
-    expect(bill.total_19).to eq 221
+    it 'can be initialized with values' do
+      bill = Magelex::LexwareBill.new customer_name: "Hugo Harm",
+        order_nr: 2039132,
+        date: "12.12.2012",
+        total: 192083,
+        total_0: 13,
+        total_7: 831,
+        total_19: 221,
+        status: 'canceled',
+        shipping_cost: 13,
+        country_code: 'DE'
+      expect(bill.customer_name).to eq "Hugo Harm"
+      expect(bill.order_nr).to eq 2039132
+      expect(bill.date).to eq "12.12.2012"
+      expect(bill.total).to eq 192083
+      expect(bill.total_0).to eq 13
+      expect(bill.total_7).to eq 831
+      expect(bill.total_19).to eq 221
+      expect(bill.status).to eq 'canceled'
+      expect(bill.shipping_cost).to eq 13
+    end
+
+    it 'does not allow unknown values' do
+      expect { Magelex::LexwareBill.new bogus: :bagel }.to raise_error
+    end
   end
 
   describe '#swiss?' do
