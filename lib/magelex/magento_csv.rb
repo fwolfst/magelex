@@ -55,7 +55,9 @@ module Magelex
           current_bill = init_bill row
         end
 
-        current_bill.add_item(row['Item Total'], row['Item Tax'], row['Item Name'])
+        current_bill.add_item(row['Item Total'],
+                              row['Item Tax'],
+                              row['Item Name'])
 
         if !bills.include? (current_bill)
           bills << current_bill
