@@ -13,7 +13,7 @@ module Magelex
       rows << [bill.date.strftime("%d.%m.%Y"),
        bill.order_nr,
        bill.customer_name,
-       bill.total,
+       bill.total.round(2),
        Magelex::AccountNumber.for_customer(bill),
        0]
       # subs
@@ -23,7 +23,7 @@ module Magelex
                   bill.date.strftime("%d.%m.%Y"),
                   bill.order_nr,
                   bill.customer_name,
-                  amount,
+                  amount.round(2),
                   0,
                   Magelex::AccountNumber.for(bill, part),
                   ]
