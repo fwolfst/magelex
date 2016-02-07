@@ -52,7 +52,24 @@ module Magelex
     end
 
     def check
-      @total == @total_0 + @total_7 + @total_19
+      @total.round(2) == (@total_0 + @total_7 + @total_19).round(2)
+    end
+
+    def consume_shipping_cost
+      @total_19 += @shipping_cost * 1.19
+      @shipping_cost = 0
+    end
+
+    def complete?
+      @status == "complete"
+    end
+
+    def swissify
+      return if !swiss?
+      @total_0 += @total_19
+      @total_19 = 0
+      @total_0 += @total_7
+      @total_7 = 0
     end
   end
 end

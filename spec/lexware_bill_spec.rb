@@ -98,5 +98,59 @@ describe Magelex::LexwareBill do
                                       total_19: 600
       expect(bill.check).to eq false
     end
+    it 'handles float corner cases' do
+      bill = Magelex::LexwareBill.new total: 79.05,
+        total_7: 9.95, total_19: 69.100004
+      expect(bill.check).to eq true
+    end
+  end
+
+  describe '#complete?' do
+    it 'returns true if complete' do
+      bill = Magelex::LexwareBill.new status: 'complete'
+      expect(bill.complete?).to eq true
+    end
+    it 'returns false if not complete' do
+      bill = Magelex::LexwareBill.new status: 'pending'
+      expect(bill.complete?).to eq false
+    end
+  end
+
+  describe '#consume_shipping_cost' do
+    it 'adds the shipping cost (*1.19) to total_19' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12, total_19: 2
+      expect(bill.total_19).to eq 2
+      expect(bill.shipping_cost).to eq 12
+      bill.consume_shipping_cost
+      expect(bill.total_19).to eq 16.28
+      expect(bill.shipping_cost).to eq 0
+    end
+  end
+
+  describe '#swissify' do
+    # total0 consumes total and resets others, if check passes
+    # shipping costs should be consumed before
+    # this has to be layed out in a graph or documented properly
+    # (what happens when)
+    it 'does nothing if bill not swiss' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12, total_19: 2
+      expect(bill.total_19).to eq 2
+      expect(bill.total_0).to eq 0
+      bill.swissify
+      expect(bill.total_19).to eq 2
+      expect(bill.total_0).to eq 0
+    end
+
+    it 'puts all total into total_0 if swiss' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12,
+        total_0: 6,
+        total_7: 3,
+        total_19: 1,
+        country_code: 'CH'
+      bill.swissify
+      expect(bill.total_19).to eq 0
+      expect(bill.total_7).to eq 0
+      expect(bill.total_0).to eq 10
+    end
   end
 end
