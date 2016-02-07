@@ -20,6 +20,9 @@ optparse = OptionParser.new do |opts|
   opts.on('-v', '--verbose', 'Run verbosely') do |o|
     options[:verbose] = o
   end
+  opts.on('-s', '--skip-db', 'Do not update dates from mysql database.') do |o|
+    options[:skipdb] = o
+  end
   opts.on_tail('--version', 'Show version and exit.') do
     puts "Magelex #{Magelex::VERSION}"
     exit 0
@@ -45,6 +48,8 @@ Magelex.logger.formatter = proc { |severity, datetime, progname, msg|
 
 def main options
   Magelex.logger.info("Started")
+
+  # Import/Read file.
   bills_export = []
   bills = Magelex::MagentoCSV.read ARGV[0]
   bills.each do |bill|
@@ -65,12 +70,26 @@ def main options
     end
   end
 
-  # Fix dates via database
-  Magelex::MagentoMYSQL.update_dates YAML.load_file('magelex.conf') bills_export
+  # Fix dates via database.
+  if !options[:skipdb]
+    begin
+      Magelex.logger.info("Fetching dates from magento mysql.")
+      Magelex::MagentoMYSQL.update_dates YAML.load_file('magelex.conf'), bills_export
+    rescue => e
+      Magelex.logger.error("Could not connect to MySQL database, exiting.")
+      Magelex.logger.error(e.inspect)
+      exit 2
+    end
+  end
 
+  # Export/Write to file
   Dir.mkdir options[:out_dir] rescue {}
   outdir  = Pathname.new(options[:out_dir]).realpath
   outfile = outdir.join(File::basename ARGV[0])
+  if File.exist?(outfile)
+    Magelex.logger.error("Output file #{outfile} exists already, exiting.")
+    exit 3
+  end
   Magelex.logger.info("Writing to #{outfile}")
   Magelex::LexwareCSV.write outfile, bills_export
   Magelex.logger.info("Finished")
