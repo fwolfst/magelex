@@ -16,9 +16,13 @@ Install it yourself as:
 
 ## Usage
 
+Call `magelex --help` to get a basic idea.
+
 ### Configuration
 
 ### Use the command line interface
+
+Call `magelex --help` to get a basic idea.
 
 ## Development
 

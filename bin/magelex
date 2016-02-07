@@ -19,6 +19,14 @@ optparse = OptionParser.new do |opts|
   opts.on('-v', '--verbose', 'Run verbosely') do |o|
     options[:verbose] = o
   end
+  opts.on_tail('--version', 'Show version and exit.') do
+    puts "Magelex #{Magelex::VERSION}"
+    exit 0
+  end
+  opts.on('-h', '--help', 'Show this help and exit.') do
+    puts opts
+    exit 0
+  end
 end.parse!
 
 if ARGV.length != 1
