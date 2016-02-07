@@ -1,5 +1,7 @@
 # Magelex
 
+*This README reflects (more or less) the current development state, for documentation of a given version, see the README shipped with that gem (or respective tag on github).*
+
 Magelex takes Magento data and presents it in a format that Lexware can read.
 
 Aim is to manage the cash flow in Lexware.
