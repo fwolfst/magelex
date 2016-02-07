@@ -1,6 +1,9 @@
 # Magelex
 
 Magelex takes Magento data and presents it in a format that Lexware can read.
+
+Aim is to manage the cash flow in Lexware.
+
 The solution is specific for one customers needs.  If you need a similar solution (or have a better one!) contact me!
 
 ## Installation
