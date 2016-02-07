@@ -14,11 +14,15 @@ Install it yourself as:
 
 ## Assumptions
 
+Customer accounts are hard coded.  Database access necessary for date corrections.
+
 ## Usage
 
 Call `magelex --help` to get a basic idea.
 
 ### Configuration
+
+Configure database access in `magelex.conf` .
 
 ### Use the command line interface
 

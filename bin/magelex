@@ -2,6 +2,7 @@
 
 require "magelex"
 
+require 'yaml'
 require 'optparse'
 
 program_name = File.basename __FILE__
@@ -63,6 +64,10 @@ def main options
       end
     end
   end
+
+  # Fix dates via database
+  Magelex::MagentoMYSQL.update_dates YAML.load_file('magelex.conf') bills_export
+
   Dir.mkdir options[:out_dir] rescue {}
   outdir  = Pathname.new(options[:out_dir]).realpath
   outfile = outdir.join(File::basename ARGV[0])
