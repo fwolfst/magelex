@@ -13,6 +13,12 @@ optparse = OptionParser.new do |opts|
   opts.on('-o', '--out-dir DIR', 'Directory to write output files to.') do |o|
     options[:out_dir] = o
   end
+  opts.on('-l', '--log-file FILE', 'File to log to (default: STDERR).') do |o|
+    options[:log_file] = o
+  end
+  opts.on('-v', '--verbose', 'Run verbosely') do |o|
+    options[:verbose] = o
+  end
 end.parse!
 
 if ARGV.length != 1
@@ -20,7 +26,7 @@ if ARGV.length != 1
   exit 1
 end
 
-Magelex.logger = Logger.new STDERR
+Magelex.logger = Logger.new(options[:log_file] ? options[:log_file] : STDERR)
 
 Magelex.logger.level = options[:verbose] ? Logger::DEBUG : Logger::INFO
 Magelex.logger.datetime_format = "%Y-%m-%d %H:%M:%S"
@@ -28,26 +34,33 @@ Magelex.logger.formatter = proc { |severity, datetime, progname, msg|
   "#{severity} - #{datetime} - #{msg}\n"
 }
 
-def main
+def main options
   Magelex.logger.info("Started")
   bills_export = []
   bills = Magelex::MagentoCSV.read ARGV[0]
   bills.each do |bill|
-    #Magelex.logger.info("Order #{bill.order_nr} Status #{bill.status}")
     if !bill.complete?
       Magelex.logger.info("Skip order #{bill.order_nr} (incomplete: #{bill.status})")
     else # complete!
       bill.consume_shipping_cost
       bill.swissify
       if !bill.check
-        Magelex.logger.info("Skip order #{bill.order_nr} (totals do not match #{bill.total} != (0: #{bill.total_0} + 7: #{bill.total_7} + 19: #{bill.total_19})")
+        Magelex.logger.info("Skip order #{bill.order_nr} "\
+                            "(totals do not match #{bill.total} != "\
+                            "(0: #{bill.total_0} + 7: #{bill.total_7} "\
+                            "+ 19: #{bill.total_19})")
       else
         Magelex.logger.debug("Handle #{bill.order_nr}")
         bills_export << bill
       end
     end
   end
-  puts Magelex::LexwareCSV.render bills_export
+  Dir.mkdir options[:out_dir] rescue {}
+  outdir  = Pathname.new(options[:out_dir]).realpath
+  outfile = outdir.join(File::basename ARGV[0])
+  Magelex.logger.info("Writing to #{outfile}")
+  Magelex::LexwareCSV.write outfile, bills_export
+  Magelex.logger.info("Finished")
 end
 
-main
+main options
