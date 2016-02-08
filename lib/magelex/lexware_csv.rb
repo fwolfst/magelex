@@ -7,15 +7,14 @@ module Magelex
       end
     end
 
-    def self.to_rows bill
-      # main
+    def self.to_split_rows bill
       rows = []
       rows << [bill.date.strftime("%d.%m.%Y"),
-       bill.order_nr,
-       bill.customer_name,
-       bill.total.round(2),
-       Magelex::AccountNumber.for_customer(bill),
-       0]
+        bill.order_nr,
+        bill.customer_name,
+        bill.total.round(2),
+        Magelex::AccountNumber.for_customer(bill),
+        0]
       # subs
       [:total_0, :total_7, :total_19].each do |part|
         if (amount = bill.send(part)) != 0
@@ -30,6 +29,27 @@ module Magelex
         end
       end
       rows
+    end
+
+    def self.to_single_row bill
+      tax_kind = [:total_0, :total_7, :total_9].detect{|t| bill.send(t) > 0}
+
+      [[bill.date.strftime("%d.%m.%Y"),
+       bill.order_nr,
+       bill.customer_name,
+       bill.total.round(2),
+       Magelex::AccountNumber.for_customer(bill),
+       Magelex::AccountNumber.for(bill, tax_kind)
+       ]]
+    end
+
+    def self.to_rows bill
+      # split-booking needed?
+      if [:total_0, :total_7, :total_19].map{|t| bill.send(t)}.count{|i| i > 0} > 1
+        to_split_rows bill
+      else
+        to_single_row bill
+      end
     end
 
     def self.render bills
