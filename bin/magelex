@@ -65,7 +65,8 @@ def main options
         Magelex.logger.info("Skip order #{bill.order_nr} "\
                             "(totals do not match #{bill.total} != "\
                             "(0: #{bill.total_0} + 7: #{bill.total_7} "\
-                            "+ 19: #{bill.total_19})")
+                            "+ 19: #{bill.total_19} "\
+                            "= #{bill.total_0 + bill.total_7 + bill.total_19})")
       else
         Magelex.logger.debug("Handle #{bill.order_nr}")
         bills_export << bill
