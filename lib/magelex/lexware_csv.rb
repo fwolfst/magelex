@@ -32,7 +32,7 @@ module Magelex
     end
 
     def self.to_single_row bill
-      tax_kind = [:total_0, :total_7, :total_9].detect{|t| bill.send(t) > 0}
+      tax_kind = [:total_0, :total_7, :total_19].detect{|t| bill.send(t) > 0}
 
       [[bill.date.strftime("%d.%m.%Y"),
        bill.order_nr,
