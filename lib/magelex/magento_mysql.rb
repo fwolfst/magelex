@@ -3,11 +3,11 @@ require 'mysql2'
 module Magelex
   module MagentoMYSQL
     def self.update_dates mysqlconf, bills
-      @client = Mysql2::Client.new(:host => mysqlconf[:host],
-                                   :port => mysqlconf[:port],
-                                   :database => mysqlconf[:database],
-                                   :username => mysqlconf[:username],
-                                   :password => mysqlconf[:password])
+      @client = Mysql2::Client.new(host: mysqlconf["host"],
+                                   port: mysqlconf["port"],
+                                   database: mysqlconf["database"],
+                                   username: mysqlconf["username"],
+                                   password: mysqlconf["password"])
 
       in_statement = bills.map{|b| "'#{b.order_id}'"}.join(',')
       query = "SELECT increment_id, created_at, updated_at, "\
