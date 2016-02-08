@@ -9,14 +9,14 @@ module Magelex
                                    username: mysqlconf["username"],
                                    password: mysqlconf["password"])
 
-      in_statement = bills.map{|b| "'#{b.order_id}'"}.join(',')
+      in_statement = bills.map{|b| "'#{b.order_nr}'"}.join(',')
       query = "SELECT increment_id, created_at, updated_at, "\
         "invoice_status_id  FROM sales_flat_invoice "\
         "WHERE increment_id IN (#{in_statement});"
 
       # Build up index TODO rubyfy
       bill_idx = {}
-      bills.each {|b| bill_idx[b.order_id] = b}
+      bills.each {|b| bill_idx[b.order_nr.to_s] = b}
       results = @client.query(query)
 
       results.each do |row|
