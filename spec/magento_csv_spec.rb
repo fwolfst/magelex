@@ -40,4 +40,10 @@ describe Magelex::MagentoCSV do
       # TODO the total_0 case
     end
   end
+  describe '#read' do
+    it 'reads and parses file directly' do
+      bills = Magelex::MagentoCSV.read "spec/data/test_data.csv"
+      expect(bills.count).to eq 2
+    end
+  end
 end
