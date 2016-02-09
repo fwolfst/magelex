@@ -68,6 +68,10 @@ describe Magelex::AccountNumber do
       expect(Magelex::AccountNumber.for(@bill, :total_19)).to eq "8400"
     end
 
+    it 'raises an error for unknown kinds' do
+      expect{Magelex::AccountNumber.for(@bill, :total_100)}.to raise_error
+    end
+
     pending 'respects swiss special cases' do
       # This has yet to be triggered manally (bill#swissify)
       expect(false).to be true

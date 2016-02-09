@@ -21,7 +21,7 @@ module Magelex
       elsif tax_kind == :total_19
         return for_19 bill
       else
-        raise "unknown tax_kind"
+        raise "unknown tax_kind (#{tax_kind})"
       end
     end
 
