@@ -52,7 +52,7 @@ module Magelex
     end
 
     def check
-      @total.round(2) == (@total_0.round(2) + @total_7.round(2) + @total_19.round(2)).round(2)
+      @total != 0 && @total.round(2) == (@total_0.round(2) + @total_7.round(2) + @total_19.round(2)).round(2)
     end
 
     def self.floor2 value

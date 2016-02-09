@@ -103,6 +103,13 @@ describe Magelex::LexwareBill do
         total_7: 9.95, total_19: 69.100004
       expect(bill.check).to eq true
     end
+    it 'is false when total equals 0' do
+      bill = Magelex::LexwareBill.new total: 0,
+                                      total_0: 0,
+                                      total_7: 0,
+                                      total_19: 0
+      expect(bill.check).to eq false
+    end
   end
 
   describe '#complete?' do
