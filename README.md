@@ -48,6 +48,11 @@ If no database queries should be done, invoke with `--skip-db`.
 
 Call `magelex --help` to get a basic idea.
 
+## TODOs
+
+  - Respect Discounts (item and totals).
+  - Handle directories as input to `bin/magelex`.
+
 ## Development
 
 After checking out the repo, run `rake spec` to run the tests. You can also run `bundle console` for an interactive prompt that will allow you to experiment. Run `bundle exec magelex` to use the gem in this directory, ignoring other installed copies of this gem.
