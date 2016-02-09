@@ -33,11 +33,11 @@ module Magelex
     def add_item amount, tax, name
       case TaxGuess.guess(amount, tax)
       when :tax0
-        @total_0 += amount
+        @total_0 += amount.round(2)
       when :tax7
-        @total_7 += amount
+        @total_7 += amount.round(2)
       when :tax19
-        @total_19 += amount
+        @total_19 += amount.round(2)
       else
         raise 'Unknown Tax class'
       end
@@ -52,11 +52,19 @@ module Magelex
     end
 
     def check
-      @total.round(2) == (@total_0 + @total_7 + @total_19).round(2)
+      @total.round(2) == (@total_0.round(2) + @total_7.round(2) + @total_19.round(2)).round(2)
+    end
+
+    def self.floor2 value
+      (value * 100).to_i / 100.0
     end
 
     def consume_shipping_cost
-      @total_19 += @shipping_cost * 1.19
+      if swiss?
+        @total_0 += LexwareBill.floor2(@shipping_cost)
+      else
+        @total_19 += LexwareBill.floor2(@shipping_cost * 1.19)
+      end
       @shipping_cost = 0
     end
 

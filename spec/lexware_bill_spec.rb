@@ -125,6 +125,15 @@ describe Magelex::LexwareBill do
       expect(bill.total_19).to eq 16.28
       expect(bill.shipping_cost).to eq 0
     end
+    it 'keeps zero tax for shippings to switzerland' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12, total_0: 2, country_code: 'CH'
+      expect(bill.total_19).to eq 0
+      expect(bill.shipping_cost).to eq 12
+      bill.consume_shipping_cost
+      expect(bill.total_0).to eq 14
+      expect(bill.total_19).to eq 0
+      expect(bill.shipping_cost).to eq 0
+    end
   end
 
   describe '#swissify' do
@@ -151,6 +160,13 @@ describe Magelex::LexwareBill do
       expect(bill.total_19).to eq 0
       expect(bill.total_7).to eq 0
       expect(bill.total_0).to eq 10
+    end
+  end
+
+  describe 'floor2' do
+    it 'floors down with precision two' do
+      expect(Magelex::LexwareBill.floor2 10.201231).to eq 10.20
+      expect(Magelex::LexwareBill.floor2 11.299999).to eq 11.29
     end
   end
 end
