@@ -9,5 +9,5 @@
 /tmp/
 *.swp
 magelex.conf
-data/
-lexware/
+/data/
+/lexware/
