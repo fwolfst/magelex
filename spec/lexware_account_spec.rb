@@ -69,7 +69,7 @@ describe Magelex::AccountNumber do
     end
 
     it 'raises an error for unknown kinds' do
-      expect{Magelex::AccountNumber.for(@bill, :total_100)}.to raise_error
+      expect{Magelex::AccountNumber.for(@bill, :total_100)}.to raise_error("unknown tax_kind (total_100)")
     end
 
     pending 'respects swiss special cases' do

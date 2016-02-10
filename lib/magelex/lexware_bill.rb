@@ -31,16 +31,18 @@ module Magelex
       @country_code == 'CH'
     end
 
-    def add_item amount, tax, name
-      case TaxGuess.guess(amount, tax)
-      when :tax0
-        @total_0 += amount.round(2)
-      when :tax7
-        @total_7 += amount.round(2)
-      when :tax19
-        @total_19 += amount.round(2)
-      else
-        raise 'Unknown Tax class'
+    def add_item amount, tax, name, discount=0
+      begin
+        case TaxGuess.guess(amount, tax)
+        when :tax0
+          @total_0 += amount.round(2)# - discount.round(0)
+        when :tax7
+          @total_7 += amount.round(2)# - discount.round(0)
+        when :tax19
+          @total_19 += amount.round(2)# - discount.round(0)
+        end
+      rescue
+        @has_problems = true
       end
     end
 

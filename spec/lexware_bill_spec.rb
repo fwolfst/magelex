@@ -29,7 +29,7 @@ describe Magelex::LexwareBill do
     end
 
     it 'does not allow unknown values' do
-      expect { Magelex::LexwareBill.new bogus: :bagel }.to raise_error
+      expect { Magelex::LexwareBill.new bogus: :bagel }.to raise_error("Unknown values for bill: {:bogus=>:bagel}")
     end
   end
 
@@ -108,6 +108,21 @@ describe Magelex::LexwareBill do
                                       total_0: 0,
                                       total_7: 0,
                                       total_19: 0
+      expect(bill.check).to eq false
+    end
+    it 'is false when total < 0' do
+      bill = Magelex::LexwareBill.new total: -10,
+                                      total_0: 0,
+                                      total_7: 0,
+                                      total_19: 0
+      expect(bill.check).to eq false
+    end
+    it 'is false when unknown tax item' do
+      bill = Magelex::LexwareBill.new total: 0,
+                                      total_0: 0,
+                                      total_7: 0,
+                                      total_19: 0
+      bill.add_item -2, 10, ''
       expect(bill.check).to eq false
     end
   end
