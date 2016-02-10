@@ -51,7 +51,6 @@ Call `magelex --help` to get a basic idea.
 ## TODOs
 
   - Respect Discounts (item and totals).
-  - Handle directories as input to `bin/magelex`.
 
 ## Development
 
