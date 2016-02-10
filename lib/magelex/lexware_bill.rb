@@ -7,7 +7,7 @@ module Magelex
                   'NL','AT','PL','PT','RO','SI','SK','FI','SE','UK']
 
     attr_accessor :order_nr, :customer_name, :country_code,
-      :date, :status, :shipping_cost, :total, :total_0, :total_7, :total_19
+      :date, :status, :shipping_cost, :total, :total_0, :total_7, :total_19, :has_problems
 
     def initialize values={}
       @total_0, @total_7, @total_19, @total = 0, 0, 0, 0
@@ -21,6 +21,7 @@ module Magelex
       @status   = values.delete(:status) || nil
       @shipping_cost = values.delete(:shipping_cost) || nil
       @country_code  = values.delete(:country_code) || nil
+      @has_problems  = false
       if !values.empty?
         raise "Unknown values for bill: #{values.inspect}"
       end
@@ -52,7 +53,7 @@ module Magelex
     end
 
     def check
-      @total != 0 && @total.round(2) == (@total_0.round(2) + @total_7.round(2) + @total_19.round(2)).round(2)
+      @has_problems == false && @total > 0 && @total.round(2) == (@total_0.round(2) + @total_7.round(2) + @total_19.round(2)).round(2)
     end
 
     def self.floor2 value
