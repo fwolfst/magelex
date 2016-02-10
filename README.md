@@ -2,7 +2,7 @@
 
 *This README reflects (more or less) the current development state, for documentation of a given version, see the README shipped with that gem (or respective tag on github).*
 
-Magelex takes Magento data and presents it in a format that Lexware can read.
+Magelex takes Magento online shop order data and presents it in a format that Lexware can read to model open positions.
 
 Aim is to manage the cash flow in Lexware.
 
@@ -16,7 +16,7 @@ Install it yourself as:
 
 ## Assumptions
 
-Customer accounts are hard coded.  Database access necessary for date corrections.
+Customer accounts are hard coded.  Database access is necessary for date corrections (but can be skipped).
 
 ## Usage
 
@@ -34,9 +34,9 @@ Call `magelex --help` to get a basic idea:
             --version                    Show version and exit.
     
 
-By default, `magelex` will log to `STDERR`, put you can pass the path to a log file.
+By default, `magelex` will log to `STDERR`, but you can pass the path to a log file.
 
-It consumes a single file (given as argument, as in `magelex magento_orders.csv`).  `magelex` will create a file with same filename in the path `lexware` (can be changed with the `--out-dir` switch).
+It consumes a single file (given as argument, as in `magelex magento_orders.csv`) or a directory of files.  `magelex` will create a file with same filename in the path `lexware` (can be changed with the `--out-dir` option).
 
 ### Configuration
 
