@@ -14,6 +14,8 @@ describe Magelex::LexwareBill do
         total_0: 13,
         total_7: 831,
         total_19: 221,
+        tax_7: 831 * 0.07,
+        tax_19: 221 * 0.19,
         status: 'canceled',
         shipping_cost: 13,
         country_code: 'DE'
@@ -24,6 +26,8 @@ describe Magelex::LexwareBill do
       expect(bill.total_0).to eq 13
       expect(bill.total_7).to eq 831
       expect(bill.total_19).to eq 221
+      expect(bill.tax_7).to eq 831 * 0.07
+      expect(bill.tax_19).to eq 221 * 0.19
       expect(bill.status).to eq 'canceled'
       expect(bill.shipping_cost).to eq 13
     end
@@ -59,7 +63,16 @@ describe Magelex::LexwareBill do
     end
     it 'adds 19% tax items to total_19' do
       @bill.add_item(10, 1.6, 'food')
+      # 1.6?
       expect(@bill.total_19).to eq(10)
+    end
+    it 'adds tax part of 7% tax items to tax_7' do
+      @bill.add_item(10, 0.7, 'book')
+      expect(@bill.tax_7).to eq(0.7)
+    end
+    it 'adds tax part of 19% tax items to tax_19' do
+      @bill.add_item(10, 1.6, 'food')
+      expect(@bill.tax_19).to eq(1.6)
     end
   end
 
