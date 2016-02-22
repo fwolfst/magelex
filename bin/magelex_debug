@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+require "magelex"
+
+require 'yaml'
+require 'optparse'
+require 'terminal-table'
+
+options = {}
+
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$PROGRAM_NAME} DIR_OR_FILE"
+  opts.separator ""
+  opts.separator "Debug magelex im- and export"
+  opts.separator ""
+
+  opts.on('-v', '--verbose', 'Run verbosely') do |o|
+    options[:verbose] = o
+  end
+  opts.on('-s', '--skip-db', 'Do not update dates from mysql database.') do |o|
+    options[:skipdb] = o
+  end
+  opts.on_tail('--version', 'Show version and exit.') do
+    puts "Magelex #{Magelex::VERSION}"
+    exit 0
+  end
+  opts.on('-h', '--help', 'Show this help and exit.') do
+    puts opts
+    exit 0
+  end
+end.parse!
+
+if ARGV.length != 1
+  STDERR.puts "Need an argument (directory or file)"
+  exit 1
+end
+
+Magelex.logger = Logger.new(options[:log_file] ? options[:log_file] : STDERR)
+
+Magelex.logger.level = options[:verbose] ? Logger::DEBUG : Logger::INFO
+Magelex.logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+Magelex.logger.formatter = proc { |severity, datetime, progname, msg|
+  "#{severity} - #{datetime} - #{msg}\n"
+}
+
+def main options
+  Magelex.logger.info("Started")
+
+  # Import/Read file.
+  bills = Magelex::MagentoCSV.read ARGV[0]
+  bills.each(&:swissify)
+  bills.each(&:process_shipping_costs)
+  bill_rows = bills.map do |bill|
+    [
+      bill.order_nr, bill.total,
+      "%.3f" %bill.total_0, "%.3f" % bill.total_7, "%.3f" % bill.total_19,
+      "%.3f" % bill.tax_7, "%.3f" % bill.tax_19,
+      "%.3f" % bill.shipping_cost, "%.3f" % bill.check_diff, bill.check ? "Y" : "N"
+    ]
+  end
+
+  t = Terminal::Table.new(headings: ["nr", "total_b",
+                                     "total0", "total7", "total19",
+                                     "tax7", "tax19",
+                                     "ship", "total_calc", "C"],
+                          rows: bill_rows)
+
+  puts t
+  Magelex.logger.info("Finished")
+end
+
+main options
