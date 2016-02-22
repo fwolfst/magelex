@@ -42,6 +42,9 @@ module Magelex
       if bill.shipping_cost == 12.6
         Magelex::logger.info "Correcting shipping cost of #{bill.order_nr} (12.6 -> 15 / 1.19 €"
         bill.shipping_cost = 15 / 1.19
+      elsif bill.shipping_cost == 4.15
+        Magelex::logger.info "Correcting shipping cost of #{bill.order_nr} (4.15 -> 4.95 / 1.19 €"
+        bill.shipping_cost = 4.95 / 1.19
       end
       bill.total         = row['Order Grand Total']
       bill

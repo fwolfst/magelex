@@ -48,12 +48,21 @@ describe Magelex::MagentoCSV do
   end
 
   describe "#init_bill" do
-    it 'corrects rounding issues at shipping costs' do
+    it 'corrects rounding issues at shipping costs (15€)' do
       require 'ostruct'
       row = OpenStruct.new('Order Number' => '1',
                            'Order Shipping' => 12.6)
       bill = Magelex::MagentoCSV.init_bill row
       expect(bill.shipping_cost).to eq 15 / 1.19
     end
+    it 'corrects rounding issues at shipping costs (4.95€)' do
+      require 'ostruct'
+      row = OpenStruct.new('Order Number' => '1',
+                           'Order Shipping' => 4.15)
+      bill = Magelex::MagentoCSV.init_bill row
+      expect(bill.shipping_cost).to eq 4.95 / 1.19
+    end
+  end
+
   end
 end
