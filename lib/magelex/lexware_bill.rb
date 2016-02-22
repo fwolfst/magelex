@@ -96,11 +96,15 @@ module Magelex
       @status == "complete"
     end
 
+    # Should be called before 'process_shipping_costs'
     def swissify
       return if !swiss?
-      @total_0 += @total_19
+
+      @incorrect_tax += @total_19 - @total_19 / 1.19
+      @incorrect_tax += @total_7 - @total_7 / 1.07
+      @total_0 += @total_19 / 1.19
       @total_19 = 0
-      @total_0 += @total_7
+      @total_0 += @total_7 / 1.07
       @total_7 = 0
     end
   end

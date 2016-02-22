@@ -190,13 +190,27 @@ describe Magelex::LexwareBill do
     it 'puts all total into total_0 if swiss' do
       bill = Magelex::LexwareBill.new shipping_cost: 12,
         total_0: 6,
-        total_7: 3,
-        total_19: 1,
+        total_7: 0,
+        total_19: 0,
+        shipping_cost: 1,
+        country_code: 'CH'
+      bill.swissify
+      bill.process_shipping_costs
+      expect(bill.total_19).to eq 0
+      expect(bill.total_7).to eq 0
+      expect(bill.total_0).to eq 7
+    end
+    it 'puts wrongly accounted taxed items on incorrect_tax? account' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12,
+        total_0: 9,
+        total_7: 0,
+        total_19: 10,
         country_code: 'CH'
       bill.swissify
       expect(bill.total_19).to eq 0
       expect(bill.total_7).to eq 0
-      expect(bill.total_0).to eq 10
+      expect(bill.total_0).to eq 9 + 10 / 1.19
+      expect(bill.incorrect_tax).to eq 10 - 10 / 1.19
     end
   end
 
