@@ -27,12 +27,15 @@ module Magelex
         bill.process_shipping_costs
         bill.swissify
         if !bill.check
-          Magelex.logger.info("Skip order #{bill.order_nr}#{bill.swiss? ? ' (swiss)' : ''}")
+          Magelex.logger.info("Skip order #{bill.order_nr}#{bill.swiss? ? ' (swiss)' : ''} #{bill.has_problems ? ' (broken item)': '' }")
           Magelex.logger.info("  (totals do not match #{bill.total} != "\
                               "(0: #{bill.total_0} + 7: #{bill.total_7} "\
                               "+ 19: #{bill.total_19} "\
                               "= #{bill.total_0 + bill.total_7 + bill.total_19})")
         else
+          if bill.swiss?
+            Magelex.logger.info("#{bill.order_nr}: swiss")
+          end
           Magelex.logger.debug("Handle #{bill.order_nr}")
           bills_export << bill
         end
