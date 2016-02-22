@@ -33,15 +33,27 @@ module Magelex
       @country_code == 'CH'
     end
 
+    # Add item values to corresponding total_ and tax_ attributes
+    # depending on discount, include or exclude taxes.
     def add_item amount, tax, name, discount=0
       begin
         case TaxGuess.guess(amount, tax)
         when :tax0
-          @total_0 += amount.round(2)# - discount.round(0)
+          @total_0 += amount.round(2)
         when :tax7
-          @total_7 += amount.round(2)# - discount.round(0)
+          if discount != 0
+            @total_7 += (amount.round(2) * 1.07)
+          else
+            @total_7 += amount.round(2)
+          end
+          @tax_7 += tax
         when :tax19
-          @total_19 += amount.round(2)# - discount.round(0)
+          if discount != 0
+            @total_19 += (amount.round(2) * 1.18)
+          else
+            @total_19 += amount.round(2)
+          end
+          @tax_19 += tax
         end
       rescue
         @has_problems = true
@@ -68,6 +80,7 @@ module Magelex
       if swiss?
         @total_0 += LexwareBill.floor2(@shipping_cost)
       else
+        @tax_19 += @shipping_cost * 0.19
         @total_19 += LexwareBill.floor2(@shipping_cost * 1.19)
       end
       @shipping_cost = 0
