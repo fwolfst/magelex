@@ -11,4 +11,3 @@ describe Magelex::TaxGuess do
     expect(Magelex::TaxGuess.guess(119, 19)).to be :tax19
   end
 end
-
