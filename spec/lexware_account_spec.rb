@@ -57,15 +57,26 @@ describe Magelex::AccountNumber do
     end
   end
 
+  describe '#for_incorrect_tax' do
+    before do
+      @bill = Magelex::LexwareBill.new
+    end
+    it 'is 1783' do
+      @bill.country_code = 'DE'
+      expect(Magelex::AccountNumber.for_incorrect_tax(@bill)).to eq '1783'
+    end
+  end
+
   describe '#for' do
     before do
-      @bill = Magelex::LexwareBill.new(total_0: 12, total_7: 78, total_19: 12.42)
+      @bill = Magelex::LexwareBill.new(total_0: 12, total_7: 78, total_19: 12.42, incorrect_tax: 9)
     end
 
     it 'picks the right bill attribute' do
       expect(Magelex::AccountNumber.for(@bill, :total_0)).to eq "8120"
       expect(Magelex::AccountNumber.for(@bill, :total_7)).to eq "8300"
       expect(Magelex::AccountNumber.for(@bill, :total_19)).to eq "8400"
+      expect(Magelex::AccountNumber.for(@bill, :incorrect_tax)).to eq "1783"
     end
 
     it 'raises an error for unknown kinds' do

@@ -16,7 +16,7 @@ module Magelex
         Magelex::AccountNumber.for_customer(bill),
         0]
       # subs
-      [:total_0, :total_7, :total_19].each do |part|
+      [:total_0, :total_7, :total_19, :incorrect_tax].each do |part|
         if (amount = bill.send(part)) != 0
           rows << [
                   bill.date.strftime("%d.%m.%Y"),
