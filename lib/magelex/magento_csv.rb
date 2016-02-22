@@ -3,7 +3,7 @@ require 'csv'
 module Magelex
   module MagentoCSV
     MONEY_FIELDS = ['Order Shipping', 'Order Grand Total',
-                    'Item Total', 'Item Tax']
+                    'Item Total', 'Item Tax', 'Item Discount']
 
     CSV::Converters[:german_money_amount] = lambda do |value, info|
       if MONEY_FIELDS.include? info[:header]
@@ -57,7 +57,8 @@ module Magelex
 
         current_bill.add_item(row['Item Total'],
                               row['Item Tax'],
-                              row['Item Name'])
+                              row['Item Name'],
+                              row['Item Discount'])
 
         if !bills.include? (current_bill)
           bills << current_bill

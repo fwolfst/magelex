@@ -151,23 +151,25 @@ describe Magelex::LexwareBill do
     end
   end
 
-  describe '#consume_shipping_cost' do
-    it 'adds the shipping cost (*1.19) to total_19' do
+  describe '#process_shipping_costs' do
+    it 'adds the shipping cost (*1.19) to total_19 and tax to tax_19' do
       bill = Magelex::LexwareBill.new shipping_cost: 12, total_19: 2
       expect(bill.total_19).to eq 2
       expect(bill.shipping_cost).to eq 12
-      bill.consume_shipping_cost
+      bill.process_shipping_costs
       expect(bill.total_19).to eq 16.28
-      expect(bill.shipping_cost).to eq 0
+      expect(bill.tax_19.round(2)).to eq 2.28
+      expect(bill.shipping_cost).to eq 12
     end
     it 'keeps zero tax for shippings to switzerland' do
       bill = Magelex::LexwareBill.new shipping_cost: 12, total_0: 2, country_code: 'CH'
       expect(bill.total_19).to eq 0
       expect(bill.shipping_cost).to eq 12
-      bill.consume_shipping_cost
+      bill.process_shipping_costs
       expect(bill.total_0).to eq 14
       expect(bill.total_19).to eq 0
-      expect(bill.shipping_cost).to eq 0
+      expect(bill.tax_19).to eq 0
+      expect(bill.shipping_cost).to eq 12
     end
   end
 

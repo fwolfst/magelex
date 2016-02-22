@@ -76,14 +76,13 @@ module Magelex
       (value * 100).to_i / 100.0
     end
 
-    def consume_shipping_cost
+    def process_shipping_costs
       if swiss?
         @total_0 += LexwareBill.floor2(@shipping_cost)
       else
         @tax_19 += @shipping_cost * 0.19
         @total_19 += LexwareBill.floor2(@shipping_cost * 1.19)
       end
-      @shipping_cost = 0
     end
 
     def complete?
