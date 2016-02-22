@@ -54,9 +54,15 @@ module Magelex
           else
             @total_19 += amount.round(2)
           end
+          if swiss?
+            Magelex::logger.info("19% Tax Item in swiss order: #{@order_nr}: #{name}")
+          end
           @tax_19 += tax
+        when :empty_item
+          Magelex::logger.debug("Empty item: '#{name}' #{amount}, tax: #{tax}")
         end
-      rescue
+      rescue RuntimeError
+        Magelex::logger.warn("Unguessable tax (#{@order_nr}: #{name} #{amount}/#{tax})")
         @has_problems = true
       end
     end
