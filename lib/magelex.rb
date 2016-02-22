@@ -10,7 +10,7 @@ require 'logger'
 
 module Magelex
   def self.logger
-    @logger ||= Logger.new
+    @logger ||= Logger.new STDERR
   end
   def self.logger= logger
     @logger = logger
