@@ -75,8 +75,12 @@ module Magelex
       @@EU_CODES.include? @country_code
     end
 
+    def check_diff
+      @total.round(2) - (@total_0.round(2) + @total_7.round(2) + @total_19.round(2) + @incorrect_tax.round(2)).round(2)
+    end
+
     def check
-      @has_problems == false && @total > 0 && @total.round(2) == (@total_0.round(2) + @total_7.round(2) + @total_19.round(2)).round(2)
+      @has_problems == false && @total > 0 && check_diff == 0
     end
 
     def self.floor2 value
