@@ -104,11 +104,11 @@ module Magelex
     def swissify
       return if !swiss?
 
-      @incorrect_tax += @total_19 - @total_19 / 1.19
-      @incorrect_tax += @total_7 - @total_7 / 1.07
-      @total_0 += @total_19 / 1.19
+      @incorrect_tax += (@total_19 - @total_19 / 1.19)
+      @incorrect_tax += (@total_7 - @total_7 / 1.07)
+      @total_0 += (@total_19 / 1.19)
       @total_19 = 0
-      @total_0 += @total_7 / 1.07
+      @total_0 += (@total_7 / 1.07)
       @total_7 = 0
     end
   end

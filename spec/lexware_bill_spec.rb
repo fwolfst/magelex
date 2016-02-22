@@ -138,6 +138,14 @@ describe Magelex::LexwareBill do
       bill.add_item -2, 10, ''
       expect(bill.check).to eq false
     end
+    it 'includes incorrect_tax' do
+      bill = Magelex::LexwareBill.new total: 5,
+                                      total_0: 1,
+                                      total_7: 0,
+                                      total_19: 0,
+                                      incorrect_tax: 4
+      expect(bill.check).to eq true
+    end
   end
 
   describe '#complete?' do
@@ -189,6 +197,7 @@ describe Magelex::LexwareBill do
 
     it 'puts all total into total_0 if swiss' do
       bill = Magelex::LexwareBill.new shipping_cost: 12,
+        total:   7,
         total_0: 6,
         total_7: 0,
         total_19: 0,
@@ -199,18 +208,23 @@ describe Magelex::LexwareBill do
       expect(bill.total_19).to eq 0
       expect(bill.total_7).to eq 0
       expect(bill.total_0).to eq 7
+      expect(bill.check).to eq true
     end
-    it 'puts wrongly accounted taxed items on incorrect_tax? account' do
+    it 'puts wrongly accounted taxed items on incorrect_tax attribute' do
       bill = Magelex::LexwareBill.new shipping_cost: 12,
-        total_0: 9,
-        total_7: 0,
+        total:    19,
+        total_0:   9,
+        total_7:   0,
         total_19: 10,
         country_code: 'CH'
       bill.swissify
       expect(bill.total_19).to eq 0
       expect(bill.total_7).to eq 0
-      expect(bill.total_0).to eq 9 + 10 / 1.19
-      expect(bill.incorrect_tax).to eq 10 - 10 / 1.19
+      expect(bill.total_0).to eq (9 + 10 / 1.19)
+      expect(bill.incorrect_tax).to eq (10 - 10 / 1.19)
+      puts bill.inspect
+      expect(bill.check_diff).to eq 0
+      expect(bill.check).to eq true
     end
   end
 
