@@ -7,7 +7,7 @@ module Magelex
                   'NL','AT','PL','PT','RO','SI','SK','FI','SE','UK']
 
     attr_accessor :order_nr, :customer_name, :country_code,
-      :date, :status, :shipping_cost, :total, :total_0, :total_7, :total_19, :has_problems, :tax_7, :tax_19
+      :date, :status, :shipping_cost, :total, :total_0, :total_7, :total_19, :has_problems, :tax_7, :tax_19, :incorrect_tax
 
     def initialize values={}
       @total_0, @total_7, @total_19, @total = 0, 0, 0, 0
@@ -20,6 +20,7 @@ module Magelex
       @total_19 = values.delete(:total_19) || 0
       @tax_7    = values.delete(:tax_7)  || 0
       @tax_19   = values.delete(:tax_19) || 0
+      @incorrect_tax = values.delete(:incorrect_tax) || 0
       @status   = values.delete(:status) || nil
       @shipping_cost = values.delete(:shipping_cost) || nil
       @country_code  = values.delete(:country_code)  || nil
