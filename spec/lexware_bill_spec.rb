@@ -222,7 +222,6 @@ describe Magelex::LexwareBill do
       expect(bill.total_7).to eq 0
       expect(bill.total_0).to eq (9 + 10 / 1.19)
       expect(bill.incorrect_tax).to eq (10 - 10 / 1.19)
-      puts bill.inspect
       expect(bill.check_diff).to eq 0
       expect(bill.check).to eq true
     end
