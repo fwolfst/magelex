@@ -48,9 +48,14 @@ If no database queries should be done, invoke with `--skip-db`.
 
 Call `magelex --help` to get a basic idea.
 
-## TODOs
+## Documentation of process
 
-  - Respect Discounts (item and totals).
+`bin/magelex` will read in a CSV file with orders exported by magento (`Magelex::MagentoCSV`).  In this file, one row accounts for one 'order item'.  Items are added up to form a `Magelex::LexwareBill`.  Adding Items to a `LexWareBill` collects the brutto values separated by tax.  For this, the tax category (0%, 7% or 19%) has to be guessed (`Magelex::TaxGuesser`).
+
+Result of this processing are a number of `LexwareBill`s.
+Swiss orders require some special attention, so steps are undertaken to adjust these to reality.  Afterwards, the shipping costs can be included.
+
+Finally the `LexwareBill`s that conform to the rules (`LexwareBill#check`) can be exported to be imported to Lexware (`Magelex::LexwareCSV`).
 
 ## Development
 
