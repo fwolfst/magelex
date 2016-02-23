@@ -17,7 +17,7 @@ module Magelex
     end
 
     def self.adjust_order_number bill
-      bill.order_nr.gsub!(/^e-/, '')
+      bill.order_nr.to_s.gsub!(/^e-/, '')
     end
 
     # total0 consumes total and resets others, if check passes
