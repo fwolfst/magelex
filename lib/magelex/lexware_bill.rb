@@ -86,30 +86,10 @@ module Magelex
     def self.floor2 value
       (value * 100).to_i / 100.0
     end
-
-    def process_shipping_costs
-      if swiss?
-        @total_0 += LexwareBill.floor2(@shipping_cost)
-      else
-        @tax_19 += @shipping_cost * 0.19
-        @total_19 += LexwareBill.floor2(@shipping_cost * 1.19)
-      end
     end
 
     def complete?
       @status == "complete"
-    end
-
-    # Should be called before 'process_shipping_costs'
-    def swissify
-      return if !swiss?
-
-      @incorrect_tax += (@total_19 - @total_19 / 1.19)
-      @incorrect_tax += (@total_7 - @total_7 / 1.07)
-      @total_0 += (@total_19 / 1.19)
-      @total_19 = 0
-      @total_0 += (@total_7 / 1.07)
-      @total_7 = 0
     end
   end
 end

@@ -25,8 +25,7 @@ module Magelex
       if !bill.complete?
         Magelex.logger.info("Skip order #{bill.order_nr} (incomplete: #{bill.status})")
       else # complete!
-        bill.process_shipping_costs
-        bill.swissify
+        Magelex::BillModifier.process bill
         if !bill.check
           Magelex.logger.info("Skip order #{bill.order_nr}#{bill.swiss? ? ' (swiss)' : ''} #{bill.has_problems ? ' (broken item)': '' }")
           Magelex.logger.info("  (totals do not match #{bill.total} != "\
