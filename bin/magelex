@@ -37,7 +37,7 @@ optparse = OptionParser.new do |opts|
 end.parse!
 
 if ARGV.length != 1
-  STDERR.puts "Need an argument (directory or file)"
+  STDERR.puts "Need a single argument (directory or file)"
   exit 1
 end
 
@@ -50,7 +50,7 @@ Magelex.logger.formatter = proc { |severity, datetime, progname, msg|
 }
 
 def main options
-  Magelex.logger.info("Started")
+  Magelex.logger.info("Started (version #{Magelex::VERSION})")
 
   Dir.mkdir options[:out_dir] rescue {}
   outdir = Pathname.new(options[:out_dir]).realpath
