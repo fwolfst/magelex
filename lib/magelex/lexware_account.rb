@@ -12,7 +12,8 @@ module Magelex
       10000 + ord * 100
     end
 
-    # get tax for :total_0, :total_7 or :total_19
+    # Get account number for
+    # :incorrect_tax, :total_0, :total_7 or :total_19
     def self.for(bill, tax_kind)
       if tax_kind == :total_0
         return for_0 bill
