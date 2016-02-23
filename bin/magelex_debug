@@ -52,20 +52,23 @@ def main options
   bills.each(&:process_shipping_costs)
   bill_rows = bills.map do |bill|
     [
-      bill.order_nr, bill.total,
+      bill.order_nr,
+      bill.swiss? ? 'Y' : 'N',
+      bill.total,
       "%.3f" %bill.total_0, "%.3f" % bill.total_7, "%.3f" % bill.total_19,
       "%.3f" % bill.tax_7, "%.3f" % bill.tax_19,
       "%.3f" % bill.shipping_cost, "%.3f" % bill.check_diff, bill.check ? "Y" : "N"
     ]
   end
 
-  t = Terminal::Table.new(headings: ["nr", "total_b",
+  t = Terminal::Table.new(headings: ["nr", "S?","total_b",
                                      "total0", "total7", "total19",
                                      "tax7", "tax19",
-                                     "ship", "total_calc", "C"],
+                                     "ship", "diff", "C"],
                           rows: bill_rows)
 
   puts t
+  puts Magelex::LexwareCSV::render bills
   Magelex.logger.info("Finished")
 end
 
