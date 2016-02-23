@@ -5,6 +5,7 @@ require 'magelex/lexware_csv'
 require 'magelex/tax_guess'
 require 'magelex/lexware_account'
 require 'magelex/magento_mysql'
+require 'magelex/bill_modifier'
 
 require 'logger'
 
