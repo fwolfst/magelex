@@ -31,8 +31,12 @@ module Magelex
       bill = Magelex::LexwareBill.new
 
       # TODO: defining a attribute|colum- map would be nicer
-      bill.order_nr = row['Order Number']
-      bill.customer_name = row['Billing Name']
+      bill.order_nr      = row['Order Number']
+      if row['Billing Company'] && !row['Billing Company'].empty?
+        bill.customer_name = row['Billing Company'].split.reverse.join(" ")
+      else
+        bill.customer_name = row['Billing Name']
+      end
       bill.country_code  = row['Shipping Country']
       bill.date          = row['Order Date']
 

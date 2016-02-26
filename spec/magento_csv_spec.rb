@@ -62,6 +62,13 @@ describe Magelex::MagentoCSV do
       bill = Magelex::MagentoCSV.init_bill row
       expect(bill.shipping_cost).to eq 4.95 / 1.19
     end
+    it 'prefers to take Billing Companys name (and reverses it)' do
+      require 'ostruct'
+      row = OpenStruct.new('Customer Name' => 'Dr Daisy Dow',
+                           'Billing Company' => "Acme Corp")
+      bill = Magelex::MagentoCSV.init_bill row
+      expect(bill.customer_lastname).to eq "Acme"
+    end
   end
 
   end
