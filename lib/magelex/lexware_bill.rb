@@ -6,8 +6,13 @@ module Magelex
                   'IE','IT','CY','LV','LT','LU','HU','MT',
                   'NL','AT','PL','PT','RO','SI','SK','FI','SE','UK']
 
-    attr_accessor :order_nr, :customer_name, :country_code,
-      :date, :status, :shipping_cost, :total, :total_0, :total_7, :total_19, :has_problems, :tax_7, :tax_19, :incorrect_tax
+    attr_accessor :order_nr, :customer_name,
+      :country_code,
+      :date, :status, :shipping_cost,
+      :total, :total_0, :total_7, :total_19,
+      :discount_7, :discount_19,
+      :total, :total_0, :total_7, :total_19,
+      :has_problems, :tax_7, :tax_19, :incorrect_tax
 
     def initialize values={}
       @total_0, @total_7, @total_19, @total = 0, 0, 0, 0
@@ -24,6 +29,8 @@ module Magelex
       @status   = values.delete(:status) || nil
       @shipping_cost = values.delete(:shipping_cost) || nil
       @country_code  = values.delete(:country_code)  || nil
+      @discount_7    = values.delete(:discount_7) || 0
+      @discount_19   = values.delete(:discount_19)  || 0
       @has_problems  = false
       if !values.empty?
         raise "Unknown values for bill: #{values.inspect}"
@@ -36,21 +43,24 @@ module Magelex
 
     # Add item values to corresponding total_ and tax_ attributes
     # depending on discount, include or exclude taxes.
-    def add_item amount, tax, name, discount=0
+    # TODO full_amount shall not be 0 if discount is not zero
+    def add_item amount, tax, name, discount=0, full_amount=0
       begin
         case TaxGuess.guess(amount, tax)
         when :tax0
           @total_0 += amount.round(2)
         when :tax7
           if discount != 0
-            @total_7 += (amount.round(2) * 1.07)
+            @total_7 += full_amount.round(2)
+            @discount_7 -= discount
           else
             @total_7 += amount.round(2)
           end
           @tax_7 += tax
         when :tax19
           if discount != 0
-            @total_19 += (amount.round(2) * 1.18)
+            @total_19 += full_amount.round(2)
+            @discount_19 -= discount
           else
             @total_19 += amount.round(2)
           end

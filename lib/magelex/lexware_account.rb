@@ -23,6 +23,10 @@ module Magelex
         return for_19 bill
       elsif tax_kind == :incorrect_tax
         return for_incorrect_tax bill
+      elsif tax_kind == :discount_7
+        return for_discount_7 bill
+      elsif tax_kind == :discount_19
+        return for_discount_19 bill
       else
         raise "unknown tax_kind (#{tax_kind})"
       end
@@ -42,6 +46,14 @@ module Magelex
 
     def self.for_incorrect_tax bill
       '1783'
+    end
+
+    def self.for_discount_7 bill
+      '8780'
+    end
+
+    def self.for_discount_19 bill
+      '8790'
     end
   end
 end
