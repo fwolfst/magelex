@@ -1,10 +1,15 @@
 module Magelex
   module BillModifier
-    def self.process bill
-      # 'Trick' around with bill
-      swissify bill
-      process_shipping_costs bill
-      adjust_order_number bill
+    # shifts to total_0 for swiss orders,
+    # consumes the shipping cost (19)
+    # and adjusts the order number
+    # takes single bill or list of bills
+    def self.process bills
+      [*bills].each do |bill|
+        swissify bill
+        process_shipping_costs bill
+        adjust_order_number bill
+      end
     end
 
     def self.process_shipping_costs bill

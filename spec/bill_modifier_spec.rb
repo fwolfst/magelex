@@ -1,6 +1,18 @@
 require 'spec_helper'
 
 describe Magelex::BillModifier do
+  describe '#process' do
+    it 'accepts single bill as argument' do
+      bill = Magelex::LexwareBill.new(order_nr: 'e-417')
+      Magelex::BillModifier.process bill
+    end
+    it 'accepts a list of bills as argument' do
+      bills = [Magelex::LexwareBill.new(order_nr: 'e-417'),
+               Magelex::LexwareBill.new(order_nr: 'e-418')]
+      Magelex::BillModifier.process bills
+    end
+  end
+
   describe '#adjust_order_number' do
     it 'strips leading "e-" from order_nr' do
       bill = Magelex::LexwareBill.new(order_nr: 'e-417')
