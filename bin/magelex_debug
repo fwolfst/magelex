@@ -48,8 +48,7 @@ def main options
 
   # Import/Read file.
   bills = Magelex::MagentoCSV.read ARGV[0]
-  bills.each(&:swissify)
-  bills.each(&:process_shipping_costs)
+  Magelex::BillModifier.process bills
   bill_rows = bills.map do |bill|
     [
       bill.order_nr,
