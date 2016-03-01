@@ -66,7 +66,7 @@ module Magelex
                               row['Item Tax'],
                               row['Item Name'],
                               row['Item Discount'],
-                              row['Item Original Price'] * row['Item Qty Ordered'])
+                              row['Item Original Price'].to_f * row['Item Qty Ordered'].to_i)
 
         if !bills.include? (current_bill)
           bills << current_bill
