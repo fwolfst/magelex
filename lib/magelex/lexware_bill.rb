@@ -101,7 +101,6 @@ module Magelex
     def self.floor2 value
       (value * 100).to_i / 100.0
     end
-    end
 
     def complete?
       @status == "complete"
