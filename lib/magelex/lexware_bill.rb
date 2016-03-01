@@ -27,7 +27,7 @@ module Magelex
       @tax_19   = values.delete(:tax_19) || 0
       @incorrect_tax = values.delete(:incorrect_tax) || 0
       @status   = values.delete(:status) || nil
-      @shipping_cost = values.delete(:shipping_cost) || nil
+      @shipping_cost = values.delete(:shipping_cost) || 0
       @country_code  = values.delete(:country_code)  || nil
       @discount_7    = values.delete(:discount_7) || 0
       @discount_19   = values.delete(:discount_19)  || 0
@@ -86,7 +86,12 @@ module Magelex
     end
 
     def check_diff
-      @total.round(2) - (@total_0.round(2) + @total_7.round(2) + @total_19.round(2) + @incorrect_tax.round(2)).round(2)
+      @total.round(2) - (@total_0.round(2) \
+                         + @total_7.round(2) \
+                         + @total_19.round(2) \
+                         + @incorrect_tax.round(2) \
+                         - @discount_7.round(2) \
+                         - @discount_19.round(2)).round(2)
     end
 
     def check
