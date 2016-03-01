@@ -57,6 +57,11 @@ Swiss orders require some special attention, so steps are undertaken to adjust t
 
 Finally the `LexwareBill`s that conform to the rules (`LexwareBill#check`) can be exported to be imported to Lexware (`Magelex::LexwareCSV`).
 
+## Changes
+
+  - 0.1.4:
+    respect per-item discounts
+
 ## Development
 
 After checking out the repo, run `rake spec` to run the tests. You can also run `bundle console` for an interactive prompt that will allow you to experiment. Run `bundle exec magelex` to use the gem in this directory, ignoring other installed copies of this gem.
