@@ -27,14 +27,23 @@ module Magelex
       else # complete!
         Magelex::BillModifier.process bill
         if !bill.check
+          if bill.discount_7 != 0 || bill.discount_19 != 0
+            Magelex.logger.info("#{bill.order_nr}: discounted")
+          end
           Magelex.logger.info("Skip order #{bill.order_nr}#{bill.swiss? ? ' (swiss)' : ''} #{bill.has_problems ? ' (broken item)': '' }")
-          Magelex.logger.info("  (totals do not match #{bill.total} != "\
+          Magelex.logger.info("  (totals do not match [#{bill.check_diff}] #{bill.total} != "\
                               "(0: #{bill.total_0} + 7: #{bill.total_7} "\
                               "+ 19: #{bill.total_19} "\
                               "= #{bill.total_0 + bill.total_7 + bill.total_19})")
+          if bill.discount_19 != 0 || bill.discount_7 != 0
+            Magelex.logger.info(bill.inspect)
+          end
         else
           if bill.swiss?
             Magelex.logger.info("#{bill.order_nr}: swiss")
+          end
+          if bill.discount_7 != 0 || bill.discount_19 != 0
+            Magelex.logger.info("#{bill.order_nr}: discounted")
           end
           Magelex.logger.debug("Handle #{bill.order_nr}")
           bills_export << bill
