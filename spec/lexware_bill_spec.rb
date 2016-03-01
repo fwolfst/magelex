@@ -18,7 +18,9 @@ describe Magelex::LexwareBill do
         tax_19: 221 * 0.19,
         status: 'canceled',
         shipping_cost: 13,
-        country_code: 'DE'
+        country_code: 'DE',
+        discount_7: 71,
+        discount_19: 79
       expect(bill.customer_name).to eq "Hugo Harm"
       expect(bill.order_nr).to eq 2039132
       expect(bill.date).to eq "12.12.2012"
@@ -30,6 +32,8 @@ describe Magelex::LexwareBill do
       expect(bill.tax_19).to eq 221 * 0.19
       expect(bill.status).to eq 'canceled'
       expect(bill.shipping_cost).to eq 13
+      expect(bill.discount_7).to eq 71
+      expect(bill.discount_19).to eq 79
     end
 
     it 'does not allow unknown values' do
@@ -56,23 +60,50 @@ describe Magelex::LexwareBill do
     it 'adds 0% tax items to total_0' do
       @bill.add_item(10, 0.0, 'magic')
       expect(@bill.total_0).to eq(10)
+      expect(@bill.has_problems).to eq false
     end
     it 'adds 7% tax items to total_7' do
       @bill.add_item(10, 0.7, 'book')
       expect(@bill.total_7).to eq(10)
+      expect(@bill.has_problems).to eq false
     end
     it 'adds 19% tax items to total_19' do
       @bill.add_item(10, 1.6, 'food')
       # 1.6?
       expect(@bill.total_19).to eq(10)
+      expect(@bill.has_problems).to eq false
     end
     it 'adds tax part of 7% tax items to tax_7' do
       @bill.add_item(10, 0.7, 'book')
+      expect(@bill.has_problems).to eq false
       expect(@bill.tax_7).to eq(0.7)
     end
     it 'adds tax part of 19% tax items to tax_19' do
       @bill.add_item(10, 1.6, 'food')
       expect(@bill.tax_19).to eq(1.6)
+      expect(@bill.has_problems).to eq false
+    end
+    it 'deals with net prices if discount is given (7%)' do
+      @bill.add_item(4.68, 0.33, 'food', 5, 10)
+      expect(@bill.has_problems).to eq false
+      expect(@bill.total_7).to eq(10)
+      expect(@bill.tax_7).to eq(0.33)
+    end
+    it 'adds discount part of 7% tax items to negative discount_7' do
+      @bill.add_item(4.68, 0.33, 'food', 5, 10)
+      expect(@bill.has_problems).to eq false
+      expect(@bill.discount_7).to eq(-5)
+    end
+    it 'deals with net prices if discount is given (19%)' do
+      @bill.add_item(4.68, 0.71, 'food', 5, 10)
+      expect(@bill.has_problems).to eq false
+      expect(@bill.total_19.round(2)).to eq(10)
+      expect(@bill.tax_19).to eq(0.71)
+    end
+    it 'adds discount part of 19% tax items to negative discount_19' do
+      @bill.add_item(4.68, 0.71, 'food', 5, 10)
+      expect(@bill.has_problems).to eq false
+      expect(@bill.discount_19).to eq(-5)
     end
   end
 
@@ -102,6 +133,7 @@ describe Magelex::LexwareBill do
                                       total_0: 100,
                                       total_7: 200,
                                       total_19: 600
+      expect(bill.check_diff).to eq 0
       expect(bill.check).to eq true
     end
     it 'is false when total does not equals subtotals' do
@@ -144,6 +176,16 @@ describe Magelex::LexwareBill do
                                       total_7: 0,
                                       total_19: 0,
                                       incorrect_tax: 4
+      expect(bill.check).to eq true
+    end
+    it 'respects discounts' do
+      bill = Magelex::LexwareBill.new total: 10,
+                                      total_0: 1,
+                                      total_7: 2,
+                                      total_19: 2,
+                                      discount_7: -2.5,
+                                      discount_19: -2.5
+      expect(bill.check_diff).to eq 0
       expect(bill.check).to eq true
     end
   end

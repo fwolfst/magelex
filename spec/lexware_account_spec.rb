@@ -67,6 +67,26 @@ describe Magelex::AccountNumber do
     end
   end
 
+  describe '#for_discount_7' do
+    before do
+      @bill = Magelex::LexwareBill.new
+    end
+    it 'is 8780' do
+      @bill.country_code = 'DE'
+      expect(Magelex::AccountNumber.for_discount_7(@bill)).to eq '8780'
+    end
+  end
+
+  describe '#for_discount_19' do
+    before do
+      @bill = Magelex::LexwareBill.new
+    end
+    it 'is 8790' do
+      @bill.country_code = 'DE'
+      expect(Magelex::AccountNumber.for_discount_19(@bill)).to eq '8790'
+    end
+  end
+
   describe '#for' do
     before do
       @bill = Magelex::LexwareBill.new(total_0: 12, total_7: 78, total_19: 12.42, incorrect_tax: 9)
