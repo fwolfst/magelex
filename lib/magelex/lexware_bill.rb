@@ -52,7 +52,7 @@ module Magelex
         when :tax7
           if discount != 0
             @total_7 += full_amount.round(2)
-            @discount_7 -= discount
+            @discount_7 += discount
           else
             @total_7 += amount.round(2)
           end
@@ -60,7 +60,7 @@ module Magelex
         when :tax19
           if discount != 0
             @total_19 += full_amount.round(2)
-            @discount_19 -= discount
+            @discount_19 += discount
           else
             @total_19 += amount.round(2)
           end
@@ -86,11 +86,11 @@ module Magelex
     end
 
     def check_diff
-      @total.round(2) - (@total_0.round(2) \
-                         + @total_7.round(2) \
-                         + @total_19.round(2) \
-                         + @incorrect_tax.round(2) \
-                         - @discount_7.round(2) \
+      @total.round(2) - (@total_0.round(2) + \
+                         + @total_7.round(2) + \
+                         + @total_19.round(2) + \
+                         + @incorrect_tax.round(2) + \
+                         - @discount_7.round(2) + \
                          - @discount_19.round(2)).round(2)
     end
 

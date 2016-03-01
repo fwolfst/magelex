@@ -89,10 +89,10 @@ describe Magelex::LexwareBill do
       expect(@bill.total_7).to eq(10)
       expect(@bill.tax_7).to eq(0.33)
     end
-    it 'adds discount part of 7% tax items to negative discount_7' do
+    it 'adds discount part of 7% tax items to discount_7' do
       @bill.add_item(4.68, 0.33, 'food', 5, 10)
       expect(@bill.has_problems).to eq false
-      expect(@bill.discount_7).to eq(-5)
+      expect(@bill.discount_7).to eq(5)
     end
     it 'deals with net prices if discount is given (19%)' do
       @bill.add_item(4.68, 0.71, 'food', 5, 10)
@@ -100,10 +100,10 @@ describe Magelex::LexwareBill do
       expect(@bill.total_19.round(2)).to eq(10)
       expect(@bill.tax_19).to eq(0.71)
     end
-    it 'adds discount part of 19% tax items to negative discount_19' do
+    it 'adds discount part of 19% tax items to discount_19' do
       @bill.add_item(4.68, 0.71, 'food', 5, 10)
       expect(@bill.has_problems).to eq false
-      expect(@bill.discount_19).to eq(-5)
+      expect(@bill.discount_19).to eq(5)
     end
   end
 
