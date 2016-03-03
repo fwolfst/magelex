@@ -46,7 +46,7 @@ module Magelex
 
     def self.to_rows bill
       # split-booking needed?
-      if [:total_0, :total_7, :total_19].map{|t| bill.send(t)}.count{|i| i > 0} > 1
+      if [:total_0, :total_7, :total_19, :incorrect_tax, :discount_7, :discount_19].map{|t| bill.send(t)}.count{|i| i > 0} > 1
         to_split_rows bill
       else
         to_single_row bill
