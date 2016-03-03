@@ -38,6 +38,10 @@ By default, `magelex` will log to `STDERR`, but you can pass the path to a log f
 
 It consumes a single file (given as argument, as in `magelex magento_orders.csv`) or a directory of files.  `magelex` will create a file with same filename in the path `lexware` (can be changed with the `--out-dir` option).
 
+### magelex_debug
+
+To play around with data, `magelex_debug` can help you.  Nothing that couldnt be done with some proper application of shell scripting foo, but more convenient. Run  `magelex_debug --help` to get an overview over possible options and arguments.
+
 ### Configuration
 
 Configure magento MySQL database access in `magelex.conf` .  An example configuration comes shipped with the gem (`magelex.conf.example`).
@@ -63,6 +67,8 @@ Quite something
 
 ## Changes
 
+  - 0.1.5:
+    respect existence of incorrect tax assignments when considering whether a split booking has to be done.
   - 0.1.4:
     respect per-item discounts
 
