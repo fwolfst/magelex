@@ -22,6 +22,9 @@ optparse = OptionParser.new do |opts|
   opts.on('-c', '--[no-]complete', 'Show only bills that are complete') do |o|
     options[:filter_complete] = o
   end
+  opts.on('-n', '--ordernumber ORDERNUMBER', 'Show only bill with given ORDERNUMBER') do |o|
+    options[:filter_ordernumber] = o
+  end
 
   opts.separator "Output options"
   opts.separator ""
@@ -69,6 +72,9 @@ def main options
   end
   if options[:filter_checked]
     bills.reject!{|b| b.check}
+  end
+  if options[:filter_ordernumber]
+    bills.reject!{|b| b.order_nr.to_s != options[:filter_ordernumber].to_s}
   end
 
   bill_rows = bills.map do |bill|
