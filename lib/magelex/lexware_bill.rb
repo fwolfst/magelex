@@ -101,13 +101,6 @@ module Magelex
     def self.floor2 value
       (value * 100).to_i / 100.0
     end
-<<<<<<< Updated upstream
-=======
-    def self.ceil2 value
-      # 0.012 -> 0.02
-      (value * 100).ceil / 100.0
-    end
->>>>>>> Stashed changes
 
     def complete?
       @status == "complete"
