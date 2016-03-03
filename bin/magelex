@@ -14,7 +14,7 @@ optparse = OptionParser.new do |opts|
     " data to be imported to open positions in lexware."
   opts.separator ""
 
-  opts.on('-o', '--out-dir DIR', 'Directory to write output files to.') do |o|
+  opts.on('-o', '--out-dir DIR', 'Directory to write output files to, otherwise concats to STDOUT. If "auto", outputs to source dir.') do |o|
     options[:out_dir] = o
   end
   opts.on('-l', '--log-file FILE', 'File to log to (default: STDERR).') do |o|

@@ -11,6 +11,7 @@ module Magelex
       rows = []
       rows << [bill.date.strftime("%d.%m.%Y"),
         bill.order_nr,
+        # Replace , by dash
         bill.customer_name,
         bill.total.round(2),
         Magelex::AccountNumber.for_customer(bill),

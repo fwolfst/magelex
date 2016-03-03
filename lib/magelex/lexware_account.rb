@@ -28,6 +28,7 @@ module Magelex
       elsif tax_kind == :discount_19
         return for_discount_19 bill
       else
+        # its not a tax kind anymore, its a posten type
         raise "unknown tax_kind (#{tax_kind})"
       end
     end

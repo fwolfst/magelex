@@ -71,6 +71,7 @@ module Magelex
       exit 3
     end
     Magelex.logger.info("Writing to #{out_file}")
+    # TODO want STDOUT
     Magelex::LexwareCSV.write out_file, bills_export
   end
 end

@@ -27,6 +27,8 @@ describe Magelex::MagentoCSV do
       bills = Magelex::MagentoCSV.parse(File.read("spec/data/swiss.csv"))
       date = Date.civil(2015, 9, 8)
       expect(bills[0].date).to eq(date)
+      expect(bills.count).to eq(2)
+      expect(bills.count{|b| b.swiss?}).to eq(2)
     end
 
     it 'adds up totals' do
@@ -62,14 +64,33 @@ describe Magelex::MagentoCSV do
       bill = Magelex::MagentoCSV.init_bill row
       expect(bill.shipping_cost).to eq 4.95 / 1.19
     end
-    it 'prefers to take Billing Companys name (and reverses it)' do
-      require 'ostruct'
-      row = OpenStruct.new('Customer Name' => 'Dr Daisy Dow',
-                           'Billing Company' => "Acme Corp")
-      bill = Magelex::MagentoCSV.init_bill row
-      expect(bill.customer_lastname).to eq "Acme"
+  end
+
+  describe "it corrects rounding issues in shipping cost calculation" do
+    it 'does' do
+      bills = Magelex::MagentoCSV.read "spec/data/escaped.csv"
+      bills.each do |b| 
+        puts b.inspect
+      end
+      expect(bills.count).to eq 2
+      #100017647
+      #name: "Frau Aust, Beate"
     end
   end
 
+  pending "it handles rounding issues" do
+      #100017647
+      #name: "Frau Aust, Beate" ?
+    #
+#    Also z. B.  im Datensatz _182 die Bestellnummer 100018404 (Datensatz siehe Anhang)
+#
+#    Die Buchung hätte lauten sollen 
+#    45,90 11300 - 8315 und
+#    367,05 - 11300 - 8310
+#
+#    im log steht
+#
+#    INFO - 2016-02-16 17:11:02 +0100 - Skip order 100018404
+#    INFO - 2016-02-16 17:11:02 +0100 - (totals do not match 412.95 != (0: 0 + 7: 367.04999999999995 + 19: 45.89 = 412.93999999999994) 
   end
 end
