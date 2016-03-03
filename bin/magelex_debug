@@ -6,7 +6,7 @@ require 'yaml'
 require 'optparse'
 require 'terminal-table'
 
-options = {}
+options = {table: true, filter_checked: false, filter_complete: false, lexware: true}
 
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: #{$PROGRAM_NAME} DIR_OR_FILE"
@@ -14,12 +14,26 @@ optparse = OptionParser.new do |opts|
   opts.separator "Debug magelex im- and export"
   opts.separator ""
 
+  opts.separator "Filtering options"
+  opts.separator ""
+  opts.on('-b', '--bad', 'Show only bills that do not pass check') do |o|
+    options[:filter_checked] = o
+  end
+  opts.on('-c', '--[no-]complete', 'Show only bills that are complete') do |o|
+    options[:filter_complete] = o
+  end
+
+  opts.separator "Output options"
+  opts.separator ""
   opts.on('-v', '--verbose', 'Run verbosely') do |o|
     options[:verbose] = o
   end
-  opts.on('-s', '--skip-db', 'Do not update dates from mysql database.') do |o|
-    options[:skipdb] = o
+  opts.on('-t', '--[no-]table', 'Show table of bills') do |o|
+    options[:table] = o
   end
+  opts.on('-l', '--[no-]lexware', 'Show lexware output') do |o|
+    options[:lexware] = o
+   end
   opts.on_tail('--version', 'Show version and exit.') do
     puts "Magelex #{Magelex::VERSION}"
     exit 0
@@ -49,25 +63,38 @@ def main options
   # Import/Read file.
   bills = Magelex::MagentoCSV.read ARGV[0]
   Magelex::BillModifier.process bills
+
+  if options[:filter_complete]
+    bills.reject!{|b| !b.complete?}
+  end
+  if options[:filter_checked]
+    bills.reject!{|b| b.check}
+  end
+
   bill_rows = bills.map do |bill|
     [
       bill.order_nr,
-      bill.swiss? ? 'Y' : 'N',
+      bill.country_code,
       bill.total,
       "%.3f" %bill.total_0, "%.3f" % bill.total_7, "%.3f" % bill.total_19,
       "%.3f" % bill.tax_7, "%.3f" % bill.tax_19,
-      "%.3f" % bill.shipping_cost, "%.3f" % bill.check_diff, bill.check ? "Y" : "N"
+      "%.3f" % bill.shipping_cost, "%.3f" % (bill.discount_7 + bill.discount_19), "%.3f" % bill.check_diff, bill.check ? "Y" : "N"
     ]
   end
 
-  t = Terminal::Table.new(headings: ["nr", "S?","total_b",
-                                     "total0", "total7", "total19",
-                                     "tax7", "tax19",
-                                     "ship", "diff", "C"],
-                          rows: bill_rows)
+  if options[:table]
+    t = Terminal::Table.new(headings: ["nr", "Co","total_b",
+                                       "total0", "total7", "total19",
+                                       "tax7", "tax19",
+                                       "ship", "discount", "diff", "C"],
+                            rows: bill_rows)
+    puts t
+  end
 
-  puts t
-  puts Magelex::LexwareCSV::render bills
+  if options[:lexware]
+    puts Magelex::LexwareCSV::render bills
+  end
+
   Magelex.logger.info("Finished")
 end
 
