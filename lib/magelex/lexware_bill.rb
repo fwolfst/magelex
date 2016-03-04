@@ -78,7 +78,7 @@ module Magelex
     end
 
     def customer_lastname
-      @customer_name.split[-1]
+      @customer_name.to_s.split[-1]
     end
 
     def in_eu?
