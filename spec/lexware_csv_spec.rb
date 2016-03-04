@@ -17,7 +17,7 @@ describe Magelex::LexwareCSV do
     it 'renders discount accounts' do
       bill = Magelex::LexwareBill.new order_nr: 1229,
         customer_name: 'Henning Rabatt', date: Date.civil(2015,8,19),
-        total: 9.95, total_7: 8, total_19: 4.95, discount_7: -5, discount_19: 0
+        total: 9.95, total_7: 8, total_19: 4.95, discount_7: 5, discount_19: 0
       #should be 10 ...
       expected_csv = "19.08.2015,1229,Henning Rabatt,9.95,11700,0\n"\
         "19.08.2015,1229,Henning Rabatt,8.0,0,8300\n"\
