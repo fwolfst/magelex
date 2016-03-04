@@ -35,9 +35,6 @@ module Magelex
                               "(0: #{bill.total_0} + 7: #{bill.total_7} "\
                               "+ 19: #{bill.total_19} "\
                               "= #{bill.total_0 + bill.total_7 + bill.total_19})")
-          if bill.discount_19 != 0 || bill.discount_7 != 0
-            Magelex.logger.info(bill.inspect)
-          end
         else
           if bill.swiss?
             Magelex.logger.info("#{bill.order_nr}: swiss")
