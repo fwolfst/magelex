@@ -14,10 +14,10 @@ module Magelex
 
     def self.process_shipping_costs bill
       if bill.swiss?
-        bill.total_0 += LexwareBill.floor2(bill.shipping_cost)
+        bill.total_0 += bill.shipping_cost
       else
         bill.tax_19 += bill.shipping_cost * 0.19
-        bill.total_19 += LexwareBill.floor2(bill.shipping_cost * 1.19)
+        bill.total_19 += (bill.shipping_cost * 1.19)
       end
     end
 
