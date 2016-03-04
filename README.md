@@ -67,6 +67,9 @@ Quite something
 
 ## Changes
 
+  - 0.1.6:
+    fixed discounts in lexware output (have to be negative)\
+    skip rounding when consuming shipping costs
   - 0.1.5:
     respect existence of incorrect tax assignments when considering whether a split booking has to be done.
   - 0.1.4:
