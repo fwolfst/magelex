@@ -41,8 +41,8 @@ billing_name_idx  = KEEP_FIELDS.index('Billing Name')
 
 # 'Anonymisation'
 out_rows.each do |r|
-  r[customer_name_idx] = r[order_nr_idx]
-  r[billing_name_idx]  = r[order_nr_idx]
+  r[customer_name_idx] = "Ano Sno#{r[order_nr_idx]}den Mous"
+  r[billing_name_idx] = "Ano Sno#{r[order_nr_idx]}den Mous"
 end
 
 csv_s = CSV::generate do |csv|
