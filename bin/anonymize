@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+
+require "magelex"
+
+def print_usage
+  STDOUT.puts "#{$PROGRAM_NAME} INFILE [OUTFILE]"
+  STDOUT.puts "Anonymizes a magento csv, outputs to STDOUT "
+  STDOUT.puts "if no OUTFILE is given."
+end
+
+if ARGV.length < 1
+  print_usage
+  STDERR.puts "Need an FILE argument"
+  exit 1
+end
+
+if ARGV.length > 1
+  outfile = ARGV[1]
+else
+  outfile = "-"
+end
+
+if File.file?(outfile) && File.exist?(outfile)
+  print_usage
+  STDERR.puts "Output file #{outfile} already exists."
+  exit 2
+end
+
+# CSV read. Keep fields. Change fields. CSV write.
+
+KEEP_FIELDS = ["Order Number","Order Date","Order Status","Order Subtotal","Order Tax","Order Shipping","Order Discount","Order Grand Total","Order Base Grand Total","Customer Name","Shipping Country","Shipping Country Name","Billing Name","Billing Country","Billing Country Name","Item Name","Item Status","Item Original Price","Item Price","Item Qty Ordered","Item Qty Invoiced","Item Tax","Item Discount","Item Total"]
+
+out_rows = []
+CSV::foreach(ARGV[0], headers: :first_row) do |row|
+  out_rows << KEEP_FIELDS.map{|f| row[f]}
+end
+
+order_nr_idx      = KEEP_FIELDS.index('Order Number')
+customer_name_idx = KEEP_FIELDS.index('Customer Name')
+billing_name_idx  = KEEP_FIELDS.index('Billing Name')
+
+# 'Anonymisation'
+out_rows.each do |r|
+  r[customer_name_idx] = r[order_nr_idx]
+  r[billing_name_idx]  = r[order_nr_idx]
+end
+
+csv_s = CSV::generate do |csv|
+  csv << KEEP_FIELDS
+  out_rows.each do |r|
+    csv << r
+  end
+end
+
+if outfile == "-"
+  puts csv_s
+else
+  File.open(outfile, 'w') do |f|
+    f.write csv_s
+  end
+end
