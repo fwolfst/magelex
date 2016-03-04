@@ -1,5 +1,6 @@
 module Magelex
   module LexwareCSV
+    # Writes(renders) to file.
     def self.write file, bills
       File.open(file, 'w') do |f|
         f.write render(bills).gsub("\n", "\r\n").encode(
@@ -11,7 +12,6 @@ module Magelex
       rows = []
       rows << [bill.date.strftime("%d.%m.%Y"),
         bill.order_nr,
-        # Replace , by dash
         bill.customer_name,
         bill.total.round(2),
         Magelex::AccountNumber.for_customer(bill),
@@ -53,6 +53,7 @@ module Magelex
       end
     end
 
+    # Renders into String
     def self.render bills
       CSV.generate(encoding: 'utf-8') do |csv|
         bills.each do |b|
