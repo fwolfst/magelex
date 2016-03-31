@@ -103,7 +103,7 @@ module Magelex
     end
 
     def complete?
-      @status == "complete"
+      @status == "complete" || @status == "fraud"
     end
   end
 end

@@ -195,6 +195,10 @@ describe Magelex::LexwareBill do
       bill = Magelex::LexwareBill.new status: 'complete'
       expect(bill.complete?).to eq true
     end
+    it 'also returns true if fraud' do
+      bill = Magelex::LexwareBill.new status: 'fraud'
+      expect(bill.complete?).to eq true
+    end
     it 'returns false if not complete' do
       bill = Magelex::LexwareBill.new status: 'pending'
       expect(bill.complete?).to eq false
