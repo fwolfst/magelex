@@ -67,6 +67,8 @@ Quite something
 
 ## Changes
 
+  - 0.1.7:
+    bills in state 'fraud' count as 'complete'
   - 0.1.6:
     fixed discounts in lexware output (have to be negative)\
     skip rounding when consuming shipping costs
