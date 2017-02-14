@@ -67,6 +67,24 @@ describe Magelex::BillModifier do
     end
   end
 
+  describe '#remove_herr_frau_name' do
+    it 'removes Herr from name' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12, total_19: 2, customer_name: "Herr John Clarke"
+      Magelex::BillModifier.remove_herr_frau_name bill
+      expect bill.customer_name = "John Clarke"
+    end
+    it 'removes Frau from name' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12, total_19: 2, customer_name: "Frau Jane Clarke"
+      Magelex::BillModifier.remove_herr_frau_name bill
+      expect bill.customer_name = "Jane Clarke"
+    end
+    it 'leaves customer name intact if no Herr/Frau present' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12, total_19: 2, customer_name: "John Clarke"
+      Magelex::BillModifier.remove_herr_frau_name bill
+      expect bill.customer_name = "John Clarke"
+    end
+  end
+
   describe '#process_shipping_costs' do
     it 'adds the shipping cost (*1.19) to total_19 and tax to tax_19' do
       bill = Magelex::LexwareBill.new shipping_cost: 12, total_19: 2

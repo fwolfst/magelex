@@ -9,6 +9,7 @@ module Magelex
         swissify bill
         process_shipping_costs bill
         adjust_order_number bill
+        remove_herr_frau_name bill
       end
     end
 
@@ -39,5 +40,11 @@ module Magelex
       bill.total_0 += (bill.total_7 / 1.07)
       bill.total_7 = 0
     end
+
+    def self.remove_herr_frau_name bill
+      bill.customer_name.gsub!(/^Herr /, '')
+      bill.customer_name.gsub!(/^Frau /, '')
+    end
+
   end
 end
