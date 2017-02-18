@@ -81,6 +81,10 @@ module Magelex
       @customer_name.to_s.split[-1]
     end
 
+    def order_and_name
+      "#{@order_nr} #{@customer_name}"
+    end
+
     def in_eu?
       @@EU_CODES.include? @country_code
     end

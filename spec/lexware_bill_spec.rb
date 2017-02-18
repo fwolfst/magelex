@@ -107,6 +107,15 @@ describe Magelex::LexwareBill do
     end
   end
 
+  describe '#order_and_name' do
+    it 'concatenates order number and name' do
+      bill = Magelex::LexwareBill.new
+      bill.customer_name = "John Doe"
+      bill.order_nr = "12002"
+      expect(bill.order_and_name).to eq "12002 John Doe"
+    end
+  end
+
   describe '#customer_lastname' do
     it 'splits the name' do
       bill = Magelex::LexwareBill.new
