@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 module Magelex
   module AccountNumber
     def self.for_customer bill

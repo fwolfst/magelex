@@ -13,6 +13,7 @@ module Magelex
   def self.logger
     @logger ||= Logger.new STDERR
   end
+
   def self.logger= logger
     @logger = logger
   end
