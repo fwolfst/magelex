@@ -1,0 +1,146 @@
+#!/usr/bin/env ruby
+
+# Create lexware parsable CSV output from magento2 invoices by reading data
+# directly from the (magento2) mysql database.
+#
+# Database credentials have to be given in the
+#   magelex_productive.conf
+# configuration file.
+#
+# CMD arguments:
+#   bundle exec bin/magelex_2_test DATE NUM_DAYS
+# log will be sent to STDERR.
+#
+# Lexware compatible CSV-file will be saved to
+#   "/tmp/#{date}-#{first_invoice_nr}-num_invoices.csv"
+
+require "magelex"
+require "awesome_print"
+
+require 'yaml'
+
+if ARGV.count != 2
+  STDERR.puts "need two arguments (FIRST_INVOICE_NR NUMBEROFINVOICES)"
+  exit 1
+end
+
+num_invoices = ARGV.pop.to_i
+first_invoice_nr = ARGV.pop
+
+Magelex.logger = Logger.new(STDERR)
+
+Magelex.logger.level = Logger::INFO
+Magelex.logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+Magelex.logger.formatter = proc { |severity, datetime, progname, msg|
+  "#{severity} - #{datetime} - #{msg}\n"
+}
+
+Magelex.logger.info("Started (version #{Magelex::VERSION})")
+
+mysqlconf = YAML.load_file('magelex_productive.conf')
+
+$client = Mysql2::Client.new(host: mysqlconf["host"],
+                             port: mysqlconf["port"],
+                             database: mysqlconf["database"],
+                             username: mysqlconf["username"],
+                             password: mysqlconf["password"])
+
+r = $client.query(
+  "
+   SELECT * FROM sales_invoice
+   WHERE increment_id BETWEEN '#{first_invoice_nr}' AND '#{first_invoice_nr.to_i + num_invoices}'
+  "
+  # For date-based query: WHERE created_at BETWEEN '#{date}' AND '#{date + num_days}'
+)
+
+
+#
+# Attention/TODOS
+#   - formerly, order_nr (not invoice_id/increment) was used!
+#   - BASE_attr (vs attr) lists in default currency (vs user/store currency). Should use that
+#   - get also order and its increment? invoice['order_id'] -> increment_id
+#   - currently status is ignored
+
+class BillFromInvoiceFactory
+  def self.q sql_query
+    Magelex.logger.debug("query: #{sql_query}")
+    $client.query sql_query
+  end
+
+  def self.get invoice_id
+    invoice =
+      q("SELECT * FROM sales_invoice WHERE entity_id = '#{invoice_id}';").first
+
+    bill = Magelex::LexwareBill.new total: invoice['base_grand_total'].to_f,
+      #shipping_cost: invoice['base_shipping_incl_tax'].to_f,
+      shipping_cost: invoice['base_shipping_amount'].to_f,
+      order_nr: invoice['entity_id'].to_s,
+      invoice_nr: invoice['increment_id'],
+      date: invoice['created_at']
+
+    order_id = invoice['order_id']
+
+    set_customer_name bill, invoice['shipping_address_id']
+    add_invoice_items bill, invoice['entity_id']
+    set_order_nr      bill, order_id
+
+    bill.order_nr = invoice['increment_id'].to_s + " " + bill.order_nr
+
+    bill
+  end
+
+  def self.add_invoice_items bill, order_id
+    invoice_items =
+      q("SELECT * FROM sales_invoice_item WHERE parent_id = #{order_id}")
+    invoice_items.each do |item|
+      bill.add_item item['base_row_total_incl_tax'].to_f, item['tax_amount'].to_f, item['name'].to_f, item['base_discount_amount'].to_f, item['base_row_total_incl_tax'].to_f
+      # discount_tax_compensation_amount: ....
+      # discount_amount....
+    end
+  end
+
+  def self.set_customer_name bill, address_id
+    address = q("SELECT * FROM sales_order_address WHERE entity_id = #{address_id}").to_a[0]
+    bill.country_code = address['country_id']
+    bill.customer_name = address['firstname'] + ' ' + address['lastname']
+    # TODO shipping or billing adress relevant?
+    # customer_address_entity WHERE entity_id = billing_address_id
+    # address["firstname"]
+    # address["lastname"]
+    # address["country_id"]
+  end
+
+  def self.set_order_nr bill, order_id
+    order = q("SELECT * FROM sales_order WHERE entity_id = #{order_id}").to_a[0]
+    bill.order_nr = order['increment_id']
+  end
+end
+
+# Iterate
+bills = r.map{|i| BillFromInvoiceFactory.get i['entity_id']}
+
+bills.each do |bill|
+  Magelex::BillModifier.process bill
+  if !bill.check
+    if bill.discount_7 != 0 || bill.discount_19 != 0
+      Magelex.logger.info("#{bill.order_nr}: discounted")
+    end
+    Magelex.logger.info("Skip order #{bill.order_nr}#{bill.swiss? ? ' (swiss)' : ''} #{bill.has_problems ? ' (broken item)': '' }")
+    Magelex.logger.info("  (totals do not match [#{bill.check_diff}] #{bill.total} != "\
+                        "(0: #{bill.total_0} + 7: #{bill.total_7} "\
+                        "+ 19: #{bill.total_19} "\
+                        "= #{bill.total_0 + bill.total_7 + bill.total_19})")
+  else
+    if bill.swiss?
+      Magelex.logger.info("#{bill.order_nr}: swiss")
+    end
+    if bill.discount_7 != 0 || bill.discount_19 != 0
+      Magelex.logger.info("#{bill.order_nr}: discounted")
+    end
+    Magelex.logger.debug("Handle #{bill.order_nr}")
+  end
+end
+
+Magelex::LexwareCSV.render bills
+Magelex::LexwareCSV.write "/tmp/#{first_invoice_nr}-#{num_invoices}.csv", bills
+
