@@ -7,6 +7,7 @@ module Magelex
     def self.process bills
       [*bills].each do |bill|
         swissify bill
+        fix_shipping_costs bill
         process_shipping_costs bill
         adjust_order_number bill
         remove_herr_frau_name bill
@@ -24,6 +25,16 @@ module Magelex
 
     def self.adjust_order_number bill
       bill.order_nr.to_s.gsub!(/^e-/, '')
+    end
+
+    def self.fix_shipping_costs bill
+      if (12.59..12.61).include? bill.shipping_cost
+        Magelex::logger.info "Correcting shipping cost of #{bill.order_nr} (12.6 -> 15 / 1.19 €)" if bill.complete?
+        bill.shipping_cost = 15 / 1.19
+      elsif bill.shipping_cost == 4.15
+        Magelex::logger.info "Correcting shipping cost of #{bill.order_nr} (4.15 -> 4.95 / 1.19 €)" if bill.complete?
+        bill.shipping_cost = 4.95 / 1.19
+      end
     end
 
     # total0 consumes total and resets others, if check passes

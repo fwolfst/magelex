@@ -85,6 +85,20 @@ describe Magelex::BillModifier do
     end
   end
 
+  describe '#fix_shipping_costs' do
+    it 'corrects rounding issues at shipping costs (15€)' do
+      bill = Magelex::LexwareBill.new shipping_cost: 12.6, total_19: 2
+      Magelex::BillModifier.fix_shipping_costs bill
+      expect(bill.shipping_cost).to eq 15 / 1.19
+    end
+
+    it 'corrects rounding issues at shipping costs (4.95€)' do
+      bill = Magelex::LexwareBill.new shipping_cost: 4.15, total_19: 2
+      Magelex::BillModifier.fix_shipping_costs bill
+      expect(bill.shipping_cost).to eq 4.95 / 1.19
+    end
+  end
+
   describe '#process_shipping_costs' do
     it 'adds the shipping cost (*1.19) to total_19 and tax to tax_19' do
       bill = Magelex::LexwareBill.new shipping_cost: 12, total_19: 2
