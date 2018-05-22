@@ -16,8 +16,38 @@
 
 require "magelex"
 require "awesome_print"
+require "optparse"
 
 require 'yaml'
+
+options = {out_dir: 'lexware'}
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$PROGRAM_NAME} FROM_DATE TO_DATE"
+  opts.separator ""
+  opts.separator "Imports invoice and order data from magento database, exports this"\
+    " data to CSV-file to be imported as open positions in lexware."
+  opts.separator "Two arguments are expected, which define the first invoice number"\
+    " and the number of invoices to process."
+  opts.separator ""
+
+  opts.on('-o', '--out-dir DIR', 'Directory to write output files to, otherwise concats to STDOUT. If "auto", outputs to source dir.') do |o|
+    options[:out_dir] = o
+  end
+  opts.on('-l', '--log-file FILE', 'File to log to (default: STDERR).') do |o|
+    options[:log_file] = o
+  end
+  opts.on('-v', '--verbose', 'Run verbosely') do |o|
+    options[:verbose] = o
+  end
+  opts.on_tail('--version', 'Show version and exit.') do
+    puts "Magelex #{Magelex::VERSION}"
+    exit 0
+  end
+  opts.on('-h', '--help', 'Show this help and exit.') do
+    puts opts
+    exit 0
+  end
+end.parse!
 
 if ARGV.count != 2
   STDERR.puts "need two arguments (FIRST_INVOICE_NR NUMBEROFINVOICES)"
@@ -27,9 +57,9 @@ end
 num_invoices = ARGV.pop.to_i
 first_invoice_nr = ARGV.pop
 
-Magelex.logger = Logger.new(STDERR)
+Magelex.logger = Logger.new(options[:log_file] ? options[:log_file] : STDERR)
 
-Magelex.logger.level = Logger::INFO
+Magelex.logger.level = options[:verbose] ? Logger::DEBUG : Logger::INFO
 Magelex.logger.datetime_format = "%Y-%m-%d %H:%M:%S"
 Magelex.logger.formatter = proc { |severity, datetime, progname, msg|
   "#{severity} - #{datetime} - #{msg}\n"
@@ -93,7 +123,14 @@ class BillFromInvoiceFactory
     invoice_items =
       q("SELECT * FROM sales_invoice_item WHERE parent_id = #{order_id}")
     invoice_items.each do |item|
-      bill.add_item item['base_row_total_incl_tax'].to_f, item['tax_amount'].to_f, item['name'].to_f, item['base_discount_amount'].to_f, item['base_row_total_incl_tax'].to_f
+      if Magelex.logger.level == Logger::DEBUG
+        ap item
+      end
+      bill.add_item item['base_row_total_incl_tax'].to_f - item['base_discount_amount'].to_f, # 'amount'
+        item['base_tax_amount'].to_f,                          # 'tax'
+        item['name'],                                     # 'name'
+        item['base_discount_amount'].to_f,                # 'discount'
+        item['base_row_total_incl_tax'].to_f              # 'full_amount'
       # discount_tax_compensation_amount: ....
       # discount_amount....
     end
@@ -116,8 +153,10 @@ class BillFromInvoiceFactory
   end
 end
 
-# Iterate
-bills = r.map{|i| BillFromInvoiceFactory.get i['entity_id']}
+bills = []
+r.each do |inv|
+  bills << BillFromInvoiceFactory.get(inv['entity_id'])
+end
 
 bills.each do |bill|
   Magelex::BillModifier.process bill
