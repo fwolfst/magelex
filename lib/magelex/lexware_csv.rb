@@ -11,7 +11,7 @@ module Magelex
     def self.to_split_rows bill
       rows = []
       rows << [bill.date.strftime("%d.%m.%Y"),
-        bill.order_nr,
+        bill.invoice_nr,
         bill.order_and_name,
         bill.total.round(2),
         Magelex::AccountNumber.for_customer(bill),
@@ -21,7 +21,7 @@ module Magelex
         if (amount = bill.send(part)) != 0
           rows << [
                   bill.date.strftime("%d.%m.%Y"),
-                  bill.order_nr,
+                  bill.invoice_nr,
                   bill.order_and_name,
                   amount.round(2),
                   0,
@@ -33,7 +33,7 @@ module Magelex
         if (amount = bill.send(part)) != 0
           rows << [
                   bill.date.strftime("%d.%m.%Y"),
-                  bill.order_nr,
+                  bill.invoice_nr,
                   bill.order_and_name,
                   - amount.round(2),
                   0,
@@ -48,7 +48,7 @@ module Magelex
       tax_kind = [:total_0, :total_7, :total_19].detect{|t| bill.send(t) > 0}
 
       [[bill.date.strftime("%d.%m.%Y"),
-       bill.order_nr,
+       bill.invoice_nr,
        bill.order_and_name,
        bill.total.round(2),
        Magelex::AccountNumber.for_customer(bill),

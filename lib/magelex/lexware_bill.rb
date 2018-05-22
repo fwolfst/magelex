@@ -7,6 +7,7 @@ module Magelex
                   'NL','AT','PL','PT','RO','SI','SK','FI','SE','UK']
 
     attr_accessor :order_nr, :customer_name,
+      :invoice_nr,
       :country_code,
       :date, :status, :shipping_cost,
       :total, :total_0, :total_7, :total_19,
@@ -18,6 +19,7 @@ module Magelex
       @total_0, @total_7, @total_19, @total = 0, 0, 0, 0
       @customer_name = values.delete(:customer_name) || ""
       @order_nr = values.delete(:order_nr) || nil
+      @invoice_nr = values.delete(:invoice_nr) || nil
       @date     = values.delete(:date)  || nil
       @total    = values.delete(:total) || 0
       @total_0  = values.delete(:total_0)  || 0
