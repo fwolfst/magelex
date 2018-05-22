@@ -52,11 +52,11 @@ module Magelex
     end
 
     def self.for_discount_7 bill
-      '8780'
+      bill.in_eu? ? '8725' : '8780'
     end
 
     def self.for_discount_19 bill
-      '8790'
+      bill.in_eu? ? '8726' : '8790'
     end
   end
 end

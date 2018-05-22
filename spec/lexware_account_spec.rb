@@ -71,9 +71,13 @@ describe Magelex::AccountNumber do
     before do
       @bill = Magelex::LexwareBill.new
     end
-    it 'is 8780' do
+    it 'is 8780 for german customer' do
       @bill.country_code = 'DE'
       expect(Magelex::AccountNumber.for_discount_7(@bill)).to eq '8780'
+    end
+    it 'is 8725 for non-german (EU) customer' do
+      @bill.country_code = 'BE'
+      expect(Magelex::AccountNumber.for_discount_7(@bill)).to eq '8725'
     end
   end
 
@@ -81,9 +85,13 @@ describe Magelex::AccountNumber do
     before do
       @bill = Magelex::LexwareBill.new
     end
-    it 'is 8790' do
+    it 'is 8790 for german customer' do
       @bill.country_code = 'DE'
       expect(Magelex::AccountNumber.for_discount_19(@bill)).to eq '8790'
+    end
+    it 'is 8726 for non-german (EU) customer' do
+      @bill.country_code = 'AU'
+      expect(Magelex::AccountNumber.for_discount_19(@bill)).to eq '8726'
     end
   end
 
