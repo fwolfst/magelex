@@ -147,7 +147,7 @@ class BillFromInvoiceFactory
   def self.set_customer_name bill, address_id
     address = q("SELECT * FROM sales_order_address WHERE entity_id = #{address_id}").to_a[0]
     bill.country_code = address['country_id']
-    bill.customer_name = address['firstname'] + ' ' + address['lastname']
+    bill.customer_name = "#{address['firstname']} #{address['lastname']}"
     # TODO shipping or billing adress relevant?
     # customer_address_entity WHERE entity_id = billing_address_id
     # address["firstname"]
