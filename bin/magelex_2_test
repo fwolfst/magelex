@@ -57,6 +57,12 @@ end
 num_invoices = ARGV.pop.to_i
 first_invoice_nr = ARGV.pop
 
+# Invoice-Numbers can consist of letters and numbers in our case.
+def increment increment_id, by_number
+  prefix,inc = increment_id.scan(/\d+|\D+/)
+  prefix + (inc.to_i + by_number.to_i).to_s
+end
+
 Magelex.logger = Logger.new(options[:log_file] ? options[:log_file] : STDERR)
 
 Magelex.logger.level = options[:verbose] ? Logger::DEBUG : Logger::INFO
@@ -75,14 +81,14 @@ $client = Mysql2::Client.new(host: mysqlconf["host"],
                              username: mysqlconf["username"],
                              password: mysqlconf["password"])
 
-r = $client.query(
-  "
+query = "
    SELECT * FROM sales_invoice
-   WHERE increment_id BETWEEN '#{first_invoice_nr}' AND '#{first_invoice_nr.to_i + num_invoices}'
-  "
-  # For date-based query: WHERE created_at BETWEEN '#{date}' AND '#{date + num_days}'
-)
+   WHERE increment_id BETWEEN '#{first_invoice_nr}' AND '#{increment first_invoice_nr, num_invoices}'"
+# For date-based query: WHERE created_at BETWEEN '#{date}' AND '#{date + num_days}'
+#
+Magelex.logger.debug query
 
+r = $client.query(query)
 
 #
 # Attention/TODOS
@@ -93,7 +99,7 @@ r = $client.query(
 
 class BillFromInvoiceFactory
   def self.q sql_query
-    Magelex.logger.debug("query: #{sql_query}")
+    #Magelex.logger.debug("query: #{sql_query}")
     $client.query sql_query
   end
 
