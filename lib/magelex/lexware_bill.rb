@@ -94,7 +94,7 @@ module Magelex
     end
 
     def in_eu?
-      @@EU_CODES.include? @country_code
+      @country_code != 'DE' && @country_code != 'CH'
     end
 
     def check_diff
