@@ -90,14 +90,24 @@ describe Magelex::AccountNumber do
       expect(Magelex::AccountNumber.for_discount_19(@bill)).to eq '8790'
     end
     it 'is 8726 for non-german (EU) customer' do
-      @bill.country_code = 'AU'
+      @bill.country_code = 'AT'
       expect(Magelex::AccountNumber.for_discount_19(@bill)).to eq '8726'
+    end
+  end
+
+  describe '#for_discount_0' do
+    before do
+      @bill = Magelex::LexwareBill.new
+    end
+    it 'is 8790 for any customer' do
+      @bill.country_code = 'DE'
+      expect(Magelex::AccountNumber.for_discount_0(@bill)).to eq '8705'
     end
   end
 
   describe '#for' do
     before do
-      @bill = Magelex::LexwareBill.new(total_0: 12, total_7: 78, total_19: 12.42, incorrect_tax: 9)
+      @bill = Magelex::LexwareBill.new(total_0: 12, total_7: 78, total_19: 12.42, incorrect_tax: 9, country_code: 'DE')
     end
 
     it 'picks the right bill attribute' do

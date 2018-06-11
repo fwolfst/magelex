@@ -6,8 +6,8 @@ module Magelex
     # takes single bill or list of bills
     def self.process bills
       [*bills].each do |bill|
-        swissify bill
         fix_shipping_costs bill
+        swissify bill
         process_shipping_costs bill
         adjust_order_number bill
         remove_herr_frau_name bill

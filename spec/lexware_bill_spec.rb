@@ -19,6 +19,7 @@ describe Magelex::LexwareBill do
         status: 'canceled',
         shipping_cost: 13,
         country_code: 'DE',
+        discount_0: 70,
         discount_7: 71,
         discount_19: 79
       expect(bill.customer_name).to eq "Hugo Harm"
@@ -32,6 +33,7 @@ describe Magelex::LexwareBill do
       expect(bill.tax_19).to eq 221 * 0.19
       expect(bill.status).to eq 'canceled'
       expect(bill.shipping_cost).to eq 13
+      expect(bill.discount_0).to eq 70
       expect(bill.discount_7).to eq 71
       expect(bill.discount_19).to eq 79
     end
@@ -89,6 +91,11 @@ describe Magelex::LexwareBill do
       expect(@bill.total_7).to eq(10)
       expect(@bill.tax_7).to eq(0.33)
     end
+    it 'adds discount part of 0% tax items to discount_0' do
+      @bill.add_item(2.68, 0.0, 'food ch', 2, 4.68)
+      expect(@bill.has_problems).to eq false
+      expect(@bill.discount_0).to eq(2)
+    end
     it 'adds discount part of 7% tax items to discount_7' do
       @bill.add_item(4.68, 0.33, 'food', 5, 10)
       expect(@bill.has_problems).to eq false
@@ -127,11 +134,13 @@ describe Magelex::LexwareBill do
   end
 
   describe '#in_eu?' do
-    it 'correctly finds out whether Bill goes to EU.' do
+    it 'correctly finds out whether Bill goes to (non German-) EU.' do
       bill = Magelex::LexwareBill.new
       bill.country_code = 'BE'
       expect(bill.in_eu?).to be true
-      bill.country_code = 'NC'
+      bill.country_code = 'DE'
+      expect(bill.in_eu?).to be false
+      bill.country_code = 'CH'
       expect(bill.in_eu?).to be false
     end
   end

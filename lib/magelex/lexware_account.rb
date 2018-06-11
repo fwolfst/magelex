@@ -25,6 +25,8 @@ module Magelex
         return for_19 bill
       elsif tax_kind == :incorrect_tax
         return for_incorrect_tax bill
+      elsif tax_kind == :discount_0
+        return for_discount_0 bill
       elsif tax_kind == :discount_7
         return for_discount_7 bill
       elsif tax_kind == :discount_19
@@ -57,6 +59,10 @@ module Magelex
 
     def self.for_discount_19 bill
       bill.in_eu? ? '8726' : '8790'
+    end
+
+    def self.for_discount_0 bill
+      bill.in_eu? ? '8726' : '8705'
     end
   end
 end

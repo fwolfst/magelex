@@ -11,7 +11,7 @@ module Magelex
       :country_code,
       :date, :status, :shipping_cost,
       :total, :total_0, :total_7, :total_19,
-      :discount_7, :discount_19,
+      :discount_0, :discount_7, :discount_19,
       :total, :total_0, :total_7, :total_19,
       :has_problems, :tax_7, :tax_19, :incorrect_tax
 
@@ -31,6 +31,7 @@ module Magelex
       @status   = values.delete(:status) || nil
       @shipping_cost = values.delete(:shipping_cost) || 0
       @country_code  = values.delete(:country_code)  || nil
+      @discount_0    = values.delete(:discount_0) || 0
       @discount_7    = values.delete(:discount_7) || 0
       @discount_19   = values.delete(:discount_19)  || 0
       @has_problems  = false
@@ -50,7 +51,12 @@ module Magelex
       begin
         case TaxGuess.guess(amount, tax)
         when :tax0
-          @total_0 += amount.round(2)
+          if discount != 0
+            @total_0 += full_amount.round(2)
+            @discount_0 += discount
+          else
+            @total_0 += amount.round(2)
+          end
         when :tax7
           if discount != 0
             @total_7 += full_amount.round(2)
@@ -96,6 +102,7 @@ module Magelex
                          + @total_7.round(2) + \
                          + @total_19.round(2) + \
                          + @incorrect_tax.round(2) + \
+                         - @discount_0.round(2) + \
                          - @discount_7.round(2) + \
                          - @discount_19.round(2)).round(2)
     end
