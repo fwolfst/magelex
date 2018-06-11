@@ -166,11 +166,21 @@ r.each do |inv|
   bills << BillFromInvoiceFactory.get(inv['entity_id'])
 end
 
+last_invoice_nr = nil
 bills.each do |bill|
+  if !bill.complete?
+    Magelex.logger.info("Skip order #{bill.order_nr} (incomplete: #{bill.status})")
+    next
+  end
+
   Magelex::BillModifier.process bill
+  if last_invoice_nr && (increment(last_invoice_nr,1) != bill.invoice_nr)
+    Magelex.logger.warn("Invoice missing (between #{last_invoice_nr} and #{bill.invoice_nr})!")
+  end
+  last_invoice_nr = bill.invoice_nr
   if !bill.check
-    if bill.discount_7 != 0 || bill.discount_19 != 0
-      Magelex.logger.info("#{bill.order_nr}: discounted")
+    if bill.discount_0 != 0 || bill.discount_7 != 0 || bill.discount_19 != 0
+      Magelex.logger.debug("#{bill.order_nr}: discounted")
     end
     Magelex.logger.info("Skip order #{bill.order_nr}#{bill.swiss? ? ' (swiss)' : ''} #{bill.has_problems ? ' (broken item)': '' }")
     Magelex.logger.info("  (totals do not match [#{bill.check_diff}] #{bill.total} != "\
