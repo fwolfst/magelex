@@ -112,7 +112,9 @@ class BillFromInvoiceFactory
       shipping_cost: invoice['base_shipping_amount'].to_f,
       order_nr: invoice['entity_id'].to_s,
       invoice_nr: invoice['increment_id'],
-      date: invoice['created_at']
+      date: invoice['created_at'],
+      status: invoice['state'] == 2 ? 'complete' : "unknown(#{invoice['state']})"
+    #TODO status needs to be taken from orders
 
     order_id = invoice['order_id']
 
